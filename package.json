@@ -1,7 +1,7 @@
 {
   "name": "bitcoin-price-tracker",
   "version": "1.0.0",
-  "description": "A Progressive Web App for tracking Bitcoin prices in real-time",
+  "description": "A Progressive Web App for tracking Bitcoin prices.",
   "main": "index.html",
   "scripts": {
   "start": "python3 -m http.server 8000",
