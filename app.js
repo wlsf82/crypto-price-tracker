@@ -70,7 +70,7 @@ class BitcoinPriceTracker {
 
       if (priceData) {
         this.updatePrice(priceData.price);
-        this.updateChange(priceData.change24h);
+        this.updateChange(priceData.change24h, priceData.changePercent);
         this.updateMarketData(priceData.marketData);
         this.updateLastUpdated();
         this.updateStatus('connected', 'Data updated');
@@ -98,12 +98,14 @@ class BitcoinPriceTracker {
       const data = await response.json();
 
       const price = parseFloat(data.lastPrice);
-      const change24h = parseFloat(data.priceChangePercent);
-      const volume24h = parseFloat(data.volume) * price;
+      const change24h = parseFloat(data.priceChange); // Use absolute price change, not percentage
+      const changePercent = parseFloat(data.priceChangePercent); // Get the exact percentage from API
+      const volume24h = parseFloat(data.quoteVolume); // Use quote volume (already in USD)
 
       return {
         price: price,
         change24h: change24h,
+        changePercent: changePercent, // Include the exact percentage
         marketData: {
           high24h: parseFloat(data.highPrice),
           low24h: parseFloat(data.lowPrice),
@@ -129,9 +131,14 @@ class BitcoinPriceTracker {
       const data = JSON.parse(proxyData.contents);
       const bitcoin = data.bitcoin;
 
+      // Calculate absolute change from percentage
+      const changePercent = bitcoin.usd_24h_change;
+      const absoluteChange = (bitcoin.usd * changePercent) / 100;
+
       return {
         price: bitcoin.usd,
-        change24h: bitcoin.usd_24h_change,
+        change24h: absoluteChange,
+        changePercent: changePercent, // Use the exact percentage from API
         marketData: {
           high24h: bitcoin.usd * 1.02, // Approximate based on current price
           low24h: bitcoin.usd * 0.98,  // Approximate based on current price
@@ -161,13 +168,15 @@ class BitcoinPriceTracker {
       const low24h = parseFloat(ticker.l[1]); // 24h low
       const volume24h = parseFloat(ticker.v[1]) * price; // 24h volume
 
-      // Calculate 24h change percentage
+      // Calculate absolute 24h change and percentage
       const open24h = parseFloat(ticker.o); // Opening price
-      const change24h = ((price - open24h) / open24h) * 100;
+      const absoluteChange = price - open24h;
+      const changePercent = open24h !== 0 ? (absoluteChange / open24h) * 100 : 0;
 
       return {
         price: price,
-        change24h: change24h,
+        change24h: absoluteChange,
+        changePercent: changePercent,
         marketData: {
           high24h: high24h,
           low24h: low24h,
@@ -194,9 +203,9 @@ class BitcoinPriceTracker {
     this.lastPrice = newPrice;
   }
 
-  updateChange(change24h) {
+  updateChange(change24h, changePercent) {
     const formattedChange = this.formatCurrency(Math.abs(change24h));
-    const formattedPercent = change24h.toFixed(2);
+    const formattedPercent = Math.abs(changePercent).toFixed(2);
 
     // Remove existing classes
     this.elements.change.className = 'change';
@@ -210,7 +219,7 @@ class BitcoinPriceTracker {
     // Update content
     const sign = change24h >= 0 ? '+' : '-';
     this.elements.change.textContent = `${sign}$${formattedChange}`;
-    this.elements.changePercent.textContent = `${sign}${Math.abs(formattedPercent)}%`;
+    this.elements.changePercent.textContent = `${sign}${formattedPercent}%`;
   }
 
   updateMarketData(data) {

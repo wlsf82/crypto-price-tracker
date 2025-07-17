@@ -1,0 +1,10 @@
+{
+  "contents": "{\"bitcoin\":{\"usd\":51111.10,\"usd_market_cap\":1007087870000,\"usd_24h_vol\":28567123456,\"usd_24h_change\":2.45}}",
+  "status": {
+    "url": "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true&include_market_cap=true",
+    "content_type": "application/json",
+    "http_code": 200,
+    "response_time": 156,
+    "content_length": 142
+  }
+}

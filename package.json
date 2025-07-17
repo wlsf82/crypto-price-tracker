@@ -4,9 +4,11 @@
   "description": "A Progressive Web App for tracking Bitcoin prices.",
   "main": "index.html",
   "scripts": {
-  "start": "python3 -m http.server 8000",
-  "dev": "python3 -m http.server 8000",
-  "serve": "python3 -m http.server 8000"
+    "start": "python3 -m http.server 8000",
+    "dev": "python3 -m http.server 8000",
+    "serve": "python3 -m http.server 8000",
+    "test": "cypress run",
+    "cy:open": "cypress open"
   },
   "keywords": [
     "bitcoin",
@@ -18,7 +20,10 @@
   "author": "Walmyr <wlsf82@gmail.com> (https://walmyr.dev/)",
   "license": "MIT",
   "repository": {
-  "type": "git",
-  "url": "https://github.com/wlsf82/bitcoin-price.git"
+    "type": "git",
+    "url": "https://github.com/wlsf82/bitcoin-price.git"
+  },
+  "devDependencies": {
+    "cypress": "^14.5.2"
   }
 }

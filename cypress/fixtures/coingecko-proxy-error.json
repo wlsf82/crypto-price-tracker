@@ -1,0 +1,10 @@
+{
+  "contents": "{\"error\":\"Service Unavailable\"}",
+  "status": {
+    "url": "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true&include_market_cap=true",
+    "content_type": "application/json",
+    "http_code": 503,
+    "response_time": 5000,
+    "content_length": 30
+  }
+}
