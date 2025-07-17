@@ -208,6 +208,16 @@ main {
   margin-bottom: 1rem;
 }
 
+.market-stats-title {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
 .status-dot {
   width: 12px;
   height: 12px;

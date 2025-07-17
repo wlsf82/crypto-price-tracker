@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Real-time Bitcoin price tracker with 24h statistics, market cap, volume data and offline support. Get live BTC/USD prices from multiple exchanges.">
   <meta name="theme-color" content="#f7931a">
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
   <title>Bitcoin Price Tracker</title>
@@ -55,24 +56,27 @@
         <span id="statusText">Ready</span>
       </div>
 
-      <div class="info-cards">
-        <div class="info-card">
-          <h3>24h High</h3>
-          <p id="high24h">--</p>
+      <section>
+        <h2 class="market-stats-title">Market Statistics</h2>
+        <div class="info-cards">
+          <div class="info-card">
+            <h3>24h High</h3>
+            <p id="high24h">--</p>
+          </div>
+          <div class="info-card">
+            <h3>24h Low</h3>
+            <p id="low24h">--</p>
+          </div>
+          <div class="info-card">
+            <h3>Market Cap</h3>
+            <p id="marketCap">--</p>
+          </div>
+          <div class="info-card">
+            <h3>Volume 24h</h3>
+            <p id="volume24h">--</p>
+          </div>
         </div>
-        <div class="info-card">
-          <h3>24h Low</h3>
-          <p id="low24h">--</p>
-        </div>
-        <div class="info-card">
-          <h3>Market Cap</h3>
-          <p id="marketCap">--</p>
-        </div>
-        <div class="info-card">
-          <h3>Volume 24h</h3>
-          <p id="volume24h">--</p>
-        </div>
-      </div>
+      </section>
     </main>
 
     <footer>
