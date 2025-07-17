@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7931a">
+  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+  <title>Bitcoin Price Tracker</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Icons -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.svg">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>
+        <span class="bitcoin-icon">₿</span>
+        Bitcoin Price Tracker
+      </h1>
+    </header>
+
+    <main>
+      <div class="price-card">
+        <div class="price-section">
+          <div class="price" id="price">Loading...</div>
+          <div class="currency">USD</div>
+        </div>
+
+        <div class="change-section">
+          <div class="change" id="change">--</div>
+          <div class="change-percent" id="changePercent">--%</div>
+        </div>
+
+        <div class="last-updated">
+          Last updated: <span id="lastUpdated">--</span>
+        </div>
+      </div>
+
+      <div class="update-section">
+        <button class="update-btn" id="updateBtn">
+          <span class="update-icon">🔄</span>
+          Update Data
+        </button>
+      </div>
+
+      <div class="status-indicator">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="statusText">Ready</span>
+      </div>
+
+      <div class="info-cards">
+        <div class="info-card">
+          <h3>24h High</h3>
+          <p id="high24h">--</p>
+        </div>
+        <div class="info-card">
+          <h3>24h Low</h3>
+          <p id="low24h">--</p>
+        </div>
+        <div class="info-card">
+          <h3>Market Cap</h3>
+          <p id="marketCap">--</p>
+        </div>
+        <div class="info-card">
+          <h3>Volume 24h</h3>
+          <p id="volume24h">--</p>
+        </div>
+      </div>
+    </main>
+
+    <footer>
+      <p>Data provided by <a href="https://binance.com" target="_blank">Binance</a>, <a href="https://kraken.com" target="_blank">Kraken</a> & <a href="https://coingecko.com" target="_blank">CoinGecko</a></p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
