@@ -15,10 +15,10 @@
     "pwa",
     "progressive-web-app"
   ],
-  "author": "Your Name",
+  "author": "Walmyr <wlsf82@gmail.com> (https://walmyr.dev/)",
   "license": "MIT",
   "repository": {
   "type": "git",
-  "url": "https://github.com/yourusername/bitcoin-price-tracker.git"
+  "url": "https://github.com/wlsf82/bitcoin-price.git"
   }
 }
