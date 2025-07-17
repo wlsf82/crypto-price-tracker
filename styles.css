@@ -346,13 +346,3 @@ footer a:hover {
     font-size: 0.9rem;
   }
 }
-
-/* Loading animation */
-.loading {
-  animation: loadingPulse 1.5s infinite;
-}
-
-@keyframes loadingPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
