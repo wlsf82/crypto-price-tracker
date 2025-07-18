@@ -1,5 +1,5 @@
 const url = Cypress.env('environment') === 'prod'
-  ? 'https://price-bitcoin.s3.eu-central-1.amazonaws.com/bitcoin-price/index.html'
+  ? 'https://price-bitcoin.s3.eu-central-1.amazonaws.com/index.html'
   : './src/index.html'
 
 describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
