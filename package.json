@@ -8,7 +8,9 @@
     "dev": "python3 -m http.server 8000",
     "serve": "python3 -m http.server 8000",
     "test": "cypress run",
-    "cy:open": "cypress open"
+    "test:prod": "cypress run --env environment=prod",
+    "cy:open": "cypress open",
+    "cy:open:prod": "cypress open --env environment=prod"
   },
   "keywords": [
     "bitcoin",
