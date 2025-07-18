@@ -1,6 +1,6 @@
 # Bitcoin Price Tracker PWA
 
-[![CI](https://github.com/wlsf82/bitcoin-price/actions/workflows/ci.yml/badge.svg)](https://github.com/wlsf82/bitcoin-price/actions/workflows/ci.yml)
+[![CI/CD](https://github.com/wlsf82/bitcoin-price/actions/workflows/cicd.yml/badge.svg)](https://github.com/wlsf82/bitcoin-price/actions)
 
 A Progressive Web App that tracks Bitcoin prices using multiple APIs with automatic fallback: Binance, CoinGecko, or Kraken.
 
