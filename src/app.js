@@ -101,6 +101,12 @@ class CryptoPriceTracker {
     root.style.setProperty('--primary-color', config.color);
     root.style.setProperty('--gradient', `linear-gradient(135deg, ${config.color}, ${this.lightenColor(config.color, 20)})`);
 
+    // Update meta theme-color for browser UI
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', config.color);
+    }
+
     this.elements.cryptoIcon.textContent = config.icon;
     this.elements.appTitle.textContent = `${config.name} Price Tracker`;
   }

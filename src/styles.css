@@ -11,7 +11,7 @@
   --red: #ff6b6b;
   --border-radius: 12px;
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  --gradient: linear-gradient(135deg, var(--primary-color), #ff8c00);
+  --gradient: linear-gradient(135deg, var(--primary-color), var(--primary-color));
 }
 
 * {
