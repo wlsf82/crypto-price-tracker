@@ -19,6 +19,7 @@ A Progressive Web App that tracks Bitcoin prices using multiple APIs with automa
 ## Deployment
 
 ### Local Development
+
 1. Start a local server (Python, Node.js, or PHP)
 2. Open `http://localhost:8000`
 
