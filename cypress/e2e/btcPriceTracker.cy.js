@@ -2,7 +2,7 @@ const url = Cypress.env('environment') === 'prod'
   ? 'https://price-bitcoin.s3.eu-central-1.amazonaws.com/index.html'
   : './src/index.html'
 
-describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
+describe('Crypto Price Tracker', () => {
   beforeEach(() => {
     // Intercept service worker registration to avoid console errors in tests
     cy.intercept('GET', '**/sw.js', { statusCode: 404 }).as('swRequest')
@@ -12,7 +12,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
 
   describe('Initial page load', () => {
     it('should display the page title and initial loading state', () => {
-      cy.title().should('eq', 'Bitcoin Price Tracker')
+      cy.title().should('eq', 'Crypto Price Tracker')
       cy.contains('h1', 'Bitcoin Price Tracker').should('be.visible')
       cy.contains('#price', 'Loading...').should('be.visible')
       cy.contains('#change', '--').should('be.visible')

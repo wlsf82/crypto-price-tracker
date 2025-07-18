@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Real-time Bitcoin price tracker with 24h statistics, market cap, volume data and offline support. Get live BTC/USD prices from multiple exchanges.">
+  <meta name="description" content="Real-time cryptocurrency price tracker for Bitcoin, Ethereum, and Solana with 24h statistics, market cap, volume data and offline support.">
   <meta name="theme-color" content="#f7931a">
   <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-  <title>Bitcoin Price Tracker</title>
+  <title>Crypto Price Tracker</title>
 
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
@@ -22,9 +22,24 @@
   <div class="container">
     <header>
       <h1>
-        <span class="bitcoin-icon">₿</span>
-        Bitcoin Price Tracker
+        <span class="crypto-icon" id="cryptoIcon">₿</span>
+        <span id="appTitle">Crypto Price Tracker</span>
       </h1>
+
+      <div class="crypto-selector">
+        <button type="button" class="crypto-btn active" data-crypto="bitcoin">
+          <span class="crypto-symbol">₿</span>
+          Bitcoin
+        </button>
+        <button type="button" class="crypto-btn" data-crypto="ethereum">
+          <span class="crypto-symbol">Ξ</span>
+          Ethereum
+        </button>
+        <button type="button" class="crypto-btn" data-crypto="solana">
+          <span class="crypto-symbol">◎</span>
+          Solana
+        </button>
+      </div>
     </header>
 
     <main>
