@@ -299,9 +299,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
 
       // Verify the flash animation was applied
       cy.get('#price').should('have.class', 'flash')
-
-      // Wait for flash animation to complete (it should auto-remove)
-      cy.wait(500)
+      // Verify the flash animation has finished
       cy.get('#price').should('not.have.class', 'flash')
     })
 
