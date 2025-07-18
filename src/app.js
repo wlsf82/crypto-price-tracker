@@ -105,6 +105,14 @@ class CryptoPriceTracker {
     this.elements.appTitle.textContent = `${config.name} Price Tracker`;
   }
 
+  /**
+   * Lightens a given hex color by a specified percentage.
+   *
+   * @param {string} color - The color to lighten, in hex format (e.g., "#RRGGBB").
+   * @param {number} percent - The percentage to lighten the color, ranging from -100 to 100.
+   *                          Positive values lighten the color, while negative values darken it.
+   * @returns {string} - The lightened color in hex format (e.g., "#RRGGBB").
+   */
   lightenColor(color, percent) {
     const num = parseInt(color.replace('#', ''), 16);
     const amt = Math.round(2.55 * percent);
