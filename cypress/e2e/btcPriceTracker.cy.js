@@ -356,8 +356,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
     it('should have proper heading structure', () => {
       cy.visit(url)
 
-      cy.get('h1').should('exist')
-      cy.get('h1').should('contain', 'Bitcoin Price Tracker')
+      cy.contains('h1', 'Bitcoin Price Tracker').should('be.visible')
 
       // Check for proper semantic structure
       cy.get('main').should('exist')
@@ -366,9 +365,10 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
     it('should have accessible button', () => {
       cy.visit(url)
 
-      cy.get('#updateBtn').should('have.attr', 'type', 'button')
-      cy.get('#updateBtn').should('be.visible')
-      cy.get('#updateBtn').should('not.have.attr', 'aria-hidden', 'true')
+      cy.get('#updateBtn')
+        .should('have.attr', 'type', 'button')
+        .and('be.visible')
+        .and('not.have.attr', 'aria-hidden', 'true')
     })
 
     it('should display proper currency formatting', () => {
