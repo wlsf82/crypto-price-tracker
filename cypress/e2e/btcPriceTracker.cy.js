@@ -256,27 +256,41 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
     })
 
     it('should prevent multiple simultaneous requests', () => {
-      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
-        fixture: 'binance-api-success.json',
-        delay: 500 // Slow response to allow button clicks
+      let requestCount = 0
+
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', (req) => {
+        requestCount += 1
+        req.reply({
+          fixture: 'binance-api-success.json',
+          delay: 1000 // Slow response to allow multiple button clicks
+        })
       }).as('binanceSlowAPI')
 
       cy.visit('./src/index.html')
       cy.wait('@binanceSlowAPI') // Wait for initial load
 
-      // Click update button, wait for it to become disabled, then try clicking again
+      // Reset counter after initial load
+      cy.then(() => {
+        requestCount = 0
+      })
+
+      // Click update button multiple times rapidly
       cy.get('#updateBtn').click()
       cy.get('#updateBtn').should('be.disabled') // Should be disabled immediately
 
-      // Try clicking the disabled button
-      cy.get('#updateBtn').click({ force: true }) // Force click on disabled button
-      cy.get('#updateBtn').click({ force: true }) // Force click on disabled button
+      // Try clicking the disabled button multiple times
+      cy.get('#updateBtn').click({ force: true })
+      cy.get('#updateBtn').click({ force: true })
+      cy.get('#updateBtn').click({ force: true })
 
-      // Wait for the request to complete and button to be enabled again
+      // Wait for the request to complete
       cy.wait('@binanceSlowAPI')
       cy.get('#updateBtn').should('be.enabled')
 
-      // The test passes if the button was properly disabled during the request
+      // Verify only one request was made despite multiple clicks
+      cy.then(() => {
+        expect(requestCount, 'API calls after multiple button clicks').to.equal(1)
+      })
     })
 
     it('should show flash animation when price changes', () => {
