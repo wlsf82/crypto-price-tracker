@@ -233,8 +233,8 @@ class CryptoPriceTracker {
         change24h: absoluteChange,
         changePercent: changePercent, // Use the exact percentage from API
         marketData: {
-          high24h: cryptoData.usd * 1.02, // Approximate based on current price
-          low24h: cryptoData.usd * 0.98,  // Approximate based on current price
+          high24h: cryptoData.usd_high_24h,
+          low24h: cryptoData.usd_low_24h,
           marketCap: cryptoData.usd_market_cap,
           volume24h: cryptoData.usd_24h_vol
         }
