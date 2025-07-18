@@ -158,29 +158,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
       cy.get('#statusDot').should('have.class', 'error')
     })
 
-    it('should handle API timeout gracefully', () => {
-      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
-        statusCode: 500
-      }).as('binanceFail')
-
-      cy.intercept('GET', '**/get?url=*coingecko*', {
-        statusCode: 500
-      }).as('coingeckoFail')
-
-      cy.intercept('GET', 'https://api.kraken.com/0/public/Ticker?pair=XBTUSD', {
-        statusCode: 500
-      }).as('krakenFail')
-
-      cy.visit(url)
-      cy.wait('@binanceFail')
-      cy.wait('@coingeckoFail')
-      cy.wait('@krakenFail')
-
-      cy.get('#statusText').should('contain', 'Update failed - check connection')
-      cy.get('#statusDot').should('have.class', 'error')
-    })
-
-    it('should handle malformed API responses', () => {
+    it('should handle API errory', () => {
       cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
         statusCode: 500
       }).as('binanceFail')
