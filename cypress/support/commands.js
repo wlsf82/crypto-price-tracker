@@ -70,7 +70,7 @@ Cypress.Commands.add('mockBinanceFailWithFallback', (fallbackApi = 'coingecko') 
 Cypress.Commands.add('waitForPriceUpdate', () => {
   cy.get('#price').should('not.contain', 'Loading...')
   cy.get('#lastUpdated').should('not.contain', '--')
-  cy.get('#statusText').should('contain', 'Data updated')
+  cy.contains('#statusText', 'Data updated').should('be.visible')
 })
 
 /**
@@ -82,7 +82,7 @@ Cypress.Commands.add('verifyPriceFormatting', (price) => {
     maximumFractionDigits: 2
   }).format(price)
 
-  cy.get('#price').should('contain', formattedPrice)
+  cy.contains('#price', formattedPrice).should('be.visible')
 })
 
 /**
