@@ -1,5 +1,8 @@
 :root {
   --bitcoin-orange: #f7931a;
+  --ethereum-blue: #627eea;
+  --solana-purple: #9945ff;
+  --primary-color: var(--bitcoin-orange);
   --dark-bg: #1a1a1a;
   --card-bg: #2d2d2d;
   --text-primary: #ffffff;
@@ -8,7 +11,7 @@
   --red: #ff6b6b;
   --border-radius: 12px;
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  --gradient: linear-gradient(135deg, var(--bitcoin-orange), #ff8c00);
+  --gradient: linear-gradient(135deg, var(--primary-color), #ff8c00);
 }
 
 * {
@@ -52,10 +55,57 @@ header h1 {
   gap: 10px;
 }
 
-.bitcoin-icon {
+.bitcoin-icon, .crypto-icon {
   font-size: 3rem;
-  color: var(--bitcoin-orange);
-  -webkit-text-fill-color: var(--bitcoin-orange);
+  color: var(--primary-color);
+  -webkit-text-fill-color: var(--primary-color);
+}
+
+.crypto-selector {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.crypto-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem 1.25rem;
+  border-radius: var(--border-radius);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.crypto-btn:hover {
+  border-color: var(--primary-color);
+  color: var(--text-primary);
+  transform: translateY(-2px);
+}
+
+.crypto-btn.active {
+  background: var(--gradient);
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow);
+}
+
+.crypto-btn .crypto-symbol {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.crypto-btn.active .crypto-symbol {
+  color: white;
 }
 
 main {
@@ -70,7 +120,7 @@ main {
   border-radius: var(--border-radius);
   padding: 2rem;
   box-shadow: var(--shadow);
-  border: 1px solid rgba(247, 147, 26, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -99,7 +149,7 @@ main {
 .price {
   font-size: 3.5rem;
   font-weight: 800;
-  color: var(--bitcoin-orange);
+  color: var(--primary-color);
   margin-bottom: 0.5rem;
   transition: all 0.3s ease;
 }
@@ -173,7 +223,7 @@ main {
 
 .update-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(247, 147, 26, 0.3);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
 }
 
 .update-btn:active {
@@ -271,7 +321,7 @@ main {
 .info-card p {
   font-size: 1.3rem;
   font-weight: 600;
-  color: var(--bitcoin-orange);
+  color: var(--primary-color);
 }
 
 footer {
@@ -287,7 +337,7 @@ footer p {
 }
 
 footer a {
-  color: var(--bitcoin-orange);
+  color: var(--primary-color);
   text-decoration: none;
 }
 
@@ -305,8 +355,17 @@ footer a:hover {
     font-size: 2rem;
   }
 
-  .bitcoin-icon {
+  .bitcoin-icon, .crypto-icon {
     font-size: 2.5rem;
+  }
+
+  .crypto-selector {
+    gap: 0.75rem;
+  }
+
+  .crypto-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
   }
 
   .price {
@@ -335,8 +394,23 @@ footer a:hover {
     gap: 5px;
   }
 
-  .bitcoin-icon {
+  .bitcoin-icon, .crypto-icon {
     font-size: 2rem;
+  }
+
+  .crypto-selector {
+    gap: 0.5rem;
+  }
+
+  .crypto-btn {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .crypto-btn .crypto-symbol {
+    font-size: 1rem;
   }
 
   .price {

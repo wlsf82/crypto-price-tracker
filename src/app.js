@@ -1,17 +1,48 @@
-class BitcoinPriceTracker {
+class CryptoPriceTracker {
   constructor() {
-    // Using APIs that actually support CORS for static hosting
-    this.binanceApiUrl = 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT';
-    this.krakenApiUrl = 'https://api.kraken.com/0/public/Ticker?pair=XBTUSD';
-    this.coingeckoProxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true&include_market_cap=true');
-
+    this.currentCrypto = 'bitcoin';
     this.lastPrice = null;
     this.isLoading = false;
+
+    // Cryptocurrency configurations
+    this.cryptoConfig = {
+      bitcoin: {
+        name: 'Bitcoin',
+        symbol: 'BTC',
+        icon: '₿',
+        color: '#f7931a',
+        binanceSymbol: 'BTCUSDT',
+        krakenSymbol: 'XBTUSD',
+        coingeckoId: 'bitcoin',
+        circulatingSupply: 19700000
+      },
+      ethereum: {
+        name: 'Ethereum',
+        symbol: 'ETH',
+        icon: 'Ξ',
+        color: '#627eea',
+        binanceSymbol: 'ETHUSDT',
+        krakenSymbol: 'XETHZUSD',
+        coingeckoId: 'ethereum',
+        circulatingSupply: 120000000
+      },
+      solana: {
+        name: 'Solana',
+        symbol: 'SOL',
+        icon: '◎',
+        color: '#9945ff',
+        binanceSymbol: 'SOLUSDT',
+        krakenSymbol: 'SOLUSD',
+        coingeckoId: 'solana',
+        circulatingSupply: 400000000
+      }
+    };
 
     this.initializeElements();
     this.registerServiceWorker();
     this.setupEventListeners();
-    this.fetchBitcoinPrice(); // Initial fetch only
+    this.updateTheme();
+    this.fetchCryptoPrice(); // Initial fetch only
   }
 
   initializeElements() {
@@ -26,14 +57,63 @@ class BitcoinPriceTracker {
       low24h: document.getElementById('low24h'),
       marketCap: document.getElementById('marketCap'),
       volume24h: document.getElementById('volume24h'),
-      updateBtn: document.getElementById('updateBtn')
+      updateBtn: document.getElementById('updateBtn'),
+      cryptoIcon: document.getElementById('cryptoIcon'),
+      appTitle: document.getElementById('appTitle'),
+      cryptoButtons: document.querySelectorAll('.crypto-btn')
     };
   }
 
   setupEventListeners() {
     this.elements.updateBtn.addEventListener('click', () => {
-      this.fetchBitcoinPrice();
+      this.fetchCryptoPrice();
     });
+
+    this.elements.cryptoButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const crypto = e.currentTarget.dataset.crypto;
+        this.switchCrypto(crypto);
+      });
+    });
+  }
+
+  switchCrypto(crypto) {
+    if (this.currentCrypto === crypto || this.isLoading) return;
+
+    // Update active button
+    this.elements.cryptoButtons.forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.dataset.crypto === crypto) {
+        btn.classList.add('active');
+      }
+    });
+
+    this.currentCrypto = crypto;
+    this.lastPrice = null;
+    this.updateTheme();
+    this.fetchCryptoPrice();
+  }
+
+  updateTheme() {
+    const config = this.cryptoConfig[this.currentCrypto];
+    const root = document.documentElement;
+
+    root.style.setProperty('--primary-color', config.color);
+    root.style.setProperty('--gradient', `linear-gradient(135deg, ${config.color}, ${this.lightenColor(config.color, 20)})`);
+
+    this.elements.cryptoIcon.textContent = config.icon;
+    this.elements.appTitle.textContent = `${config.name} Price Tracker`;
+  }
+
+  lightenColor(color, percent) {
+    const num = parseInt(color.replace('#', ''), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = (num >> 16) + amt;
+    const G = (num >> 8 & 0x00FF) + amt;
+    const B = (num & 0x0000FF) + amt;
+    return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+      (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+      (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
   }
 
   async registerServiceWorker() {
@@ -47,7 +127,7 @@ class BitcoinPriceTracker {
     }
   }
 
-  async fetchBitcoinPrice() {
+  async fetchCryptoPrice() {
     if (this.isLoading) return; // Prevent multiple simultaneous requests
 
     try {
@@ -79,7 +159,7 @@ class BitcoinPriceTracker {
       }
 
     } catch (error) {
-      console.error('Error fetching Bitcoin price:', error);
+      console.error(`Error fetching ${this.cryptoConfig[this.currentCrypto].name} price:`, error);
       this.updateStatus('error', 'Update failed - check connection');
     } finally {
       this.isLoading = false;
@@ -89,7 +169,9 @@ class BitcoinPriceTracker {
 
   async fetchBinanceAPI() {
     try {
-      const response = await fetch(this.binanceApiUrl);
+      const config = this.cryptoConfig[this.currentCrypto];
+      const binanceApiUrl = `https://api.binance.com/api/v3/ticker/24hr?symbol=${config.binanceSymbol}`;
+      const response = await fetch(binanceApiUrl);
 
       if (!response.ok) {
         throw new Error(`Binance API error! status: ${response.status}`);
@@ -109,7 +191,7 @@ class BitcoinPriceTracker {
         marketData: {
           high24h: parseFloat(data.highPrice),
           low24h: parseFloat(data.lowPrice),
-          marketCap: price * 19700000, // Approximate circulating supply
+          marketCap: price * config.circulatingSupply,
           volume24h: volume24h
         }
       };
@@ -121,7 +203,9 @@ class BitcoinPriceTracker {
 
   async fetchProxiedCoinGeckoAPI() {
     try {
-      const response = await fetch(this.coingeckoProxyUrl);
+      const config = this.cryptoConfig[this.currentCrypto];
+      const coingeckoProxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(`https://api.coingecko.com/api/v3/simple/price?ids=${config.coingeckoId}&vs_currencies=usd&include_24hr_change=true&include_24hr_vol=true&include_market_cap=true`);
+      const response = await fetch(coingeckoProxyUrl);
 
       if (!response.ok) {
         throw new Error(`Proxy API error! status: ${response.status}`);
@@ -129,21 +213,21 @@ class BitcoinPriceTracker {
 
       const proxyData = await response.json();
       const data = JSON.parse(proxyData.contents);
-      const bitcoin = data.bitcoin;
+      const cryptoData = data[config.coingeckoId];
 
       // Calculate absolute change from percentage
-      const changePercent = bitcoin.usd_24h_change;
-      const absoluteChange = (bitcoin.usd * changePercent) / 100;
+      const changePercent = cryptoData.usd_24h_change;
+      const absoluteChange = (cryptoData.usd * changePercent) / 100;
 
       return {
-        price: bitcoin.usd,
+        price: cryptoData.usd,
         change24h: absoluteChange,
         changePercent: changePercent, // Use the exact percentage from API
         marketData: {
-          high24h: bitcoin.usd * 1.02, // Approximate based on current price
-          low24h: bitcoin.usd * 0.98,  // Approximate based on current price
-          marketCap: bitcoin.usd_market_cap,
-          volume24h: bitcoin.usd_24h_vol
+          high24h: cryptoData.usd * 1.02, // Approximate based on current price
+          low24h: cryptoData.usd * 0.98,  // Approximate based on current price
+          marketCap: cryptoData.usd_market_cap,
+          volume24h: cryptoData.usd_24h_vol
         }
       };
     } catch (error) {
@@ -154,14 +238,24 @@ class BitcoinPriceTracker {
 
   async fetchKrakenAPI() {
     try {
-      const response = await fetch(this.krakenApiUrl);
+      const config = this.cryptoConfig[this.currentCrypto];
+      const krakenApiUrl = `https://api.kraken.com/0/public/Ticker?pair=${config.krakenSymbol}`;
+      const response = await fetch(krakenApiUrl);
 
       if (!response.ok) {
         throw new Error(`Kraken API error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      const ticker = data.result.XXBTZUSD;
+
+      // Kraken returns different key formats for different pairs
+      let ticker;
+      const possibleKeys = Object.keys(data.result);
+      if (possibleKeys.length > 0) {
+        ticker = data.result[possibleKeys[0]]; // Use the first (and usually only) key
+      } else {
+        throw new Error('No ticker data found in Kraken response');
+      }
 
       const price = parseFloat(ticker.c[0]); // Current price
       const high24h = parseFloat(ticker.h[1]); // 24h high
@@ -180,7 +274,7 @@ class BitcoinPriceTracker {
         marketData: {
           high24h: high24h,
           low24h: low24h,
-          marketCap: price * 19700000, // Approximate circulating supply
+          marketCap: price * config.circulatingSupply,
           volume24h: volume24h
         }
       };
@@ -277,7 +371,7 @@ class BitcoinPriceTracker {
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  const tracker = new BitcoinPriceTracker();
+  const tracker = new CryptoPriceTracker();
 
   // Handle online/offline events
   window.addEventListener('offline', () => {

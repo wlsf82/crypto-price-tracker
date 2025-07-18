@@ -1,7 +1,7 @@
 {
-  "name": "Bitcoin Price Tracker",
-  "short_name": "BTC Tracker",
-  "description": "Real-time Bitcoin price tracking Progressive Web App",
+  "name": "Crypto Price Tracker",
+  "short_name": "Crypto Tracker",
+  "description": "Real-time cryptocurrency price tracking Progressive Web App for Bitcoin, Ethereum, and Solana",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#1a1a1a",
