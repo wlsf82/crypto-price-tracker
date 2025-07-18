@@ -70,7 +70,7 @@ This app uses multiple reliable APIs with an automatic fallback system:
 ## File Structure
 
 ```text
-bitcoin-price/
+bitcoin-price/src/
 ├── index.html           # Main HTML file
 ├── styles.css           # CSS styles
 ├── app.js               # Main JavaScript application

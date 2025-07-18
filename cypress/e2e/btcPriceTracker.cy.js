@@ -3,7 +3,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
     // Intercept service worker registration to avoid console errors in tests
     cy.intercept('GET', '**/sw.js', { statusCode: 404 }).as('swRequest')
 
-    cy.visit('./index.html')
+    cy.visit('./src/index.html')
   })
 
   describe('Initial page load', () => {
@@ -39,7 +39,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
         fixture: 'binance-api-success.json'
       }).as('binanceAPI')
 
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceAPI')
 
       // Verify price display
@@ -74,7 +74,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
         fixture: 'coingecko-proxy-success.json'
       }).as('coingeckoAPI')
 
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceFail')
       cy.wait('@coingeckoAPI')
 
@@ -95,7 +95,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
         fixture: 'kraken-api-success.json'
       }).as('krakenAPI')
 
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceFail')
       cy.wait('@coingeckoFail')
       cy.wait('@krakenAPI')
@@ -113,7 +113,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
         fixture: 'binance-negative-change.json'
       }).as('binanceNegative')
 
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceNegative')
 
       cy.get('#change').should('contain', '-$2,500.75') // From fixture
@@ -124,7 +124,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
 
     it('should display data using successful API mock (custom commands)', () => {
       cy.mockAllApisSuccess()
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceAPI')
       cy.waitForPriceUpdate()
       cy.verifyPriceFormatting(51111.10)
@@ -145,7 +145,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
         statusCode: 500
       }).as('krakenFail')
 
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceFail')
       cy.wait('@coingeckoFail')
       cy.wait('@krakenFail')
@@ -167,7 +167,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
         statusCode: 500
       }).as('krakenFail')
 
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceFail')
       cy.wait('@coingeckoFail')
       cy.wait('@krakenFail')
@@ -189,7 +189,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
         statusCode: 500
       }).as('krakenFail')
 
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceFail')
       cy.wait('@coingeckoFail')
       cy.wait('@krakenFail')
@@ -200,7 +200,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
 
     it('should handle all APIs failing (custom commands)', () => {
       cy.mockAllApisError()
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
 
       cy.get('#statusText').should('contain', 'Update failed - check connection')
       cy.get('#statusDot').should('have.class', 'error')
@@ -210,7 +210,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
   describe('Fallback scenarios with custom commands', () => {
     it('should test CoinGecko fallback', () => {
       cy.mockBinanceFailWithFallback('coingecko')
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceFail')
       cy.wait('@coingeckoAPI')
       cy.waitForPriceUpdate()
@@ -218,7 +218,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
 
     it('should test Kraken fallback', () => {
       cy.mockBinanceFailWithFallback('kraken')
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceFail')
       cy.wait('@coingeckoFail')
       cy.wait('@krakenAPI')
@@ -233,7 +233,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
         delay: 1000 // Add delay to catch button state
       }).as('binanceAPI')
 
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceAPI')
 
       // Click update button
@@ -261,7 +261,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
         delay: 500 // Slow response to allow button clicks
       }).as('binanceSlowAPI')
 
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceSlowAPI') // Wait for initial load
 
       // Click update button, wait for it to become disabled, then try clicking again
@@ -285,7 +285,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
         fixture: 'binance-api-success.json'
       }).as('binanceFirst')
 
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceFirst')
 
       // Mock second API call with different price
@@ -307,7 +307,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
 
     it('should update data when button is clicked (custom commands)', () => {
       cy.mockAllApisSuccess()
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceAPI')
 
       // Click update button to verify it works
@@ -319,7 +319,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
 
   describe('Offline scenarios', () => {
     beforeEach(() => {
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
     })
 
     it('should handle offline state', () => {
@@ -360,7 +360,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
 
   describe('Accessibility and UI', () => {
     it('should have proper heading structure', () => {
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
 
       cy.get('h1').should('exist')
       cy.get('h1').should('contain', 'Bitcoin Price Tracker')
@@ -370,7 +370,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
     })
 
     it('should have accessible button', () => {
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
 
       cy.get('#updateBtn').should('have.attr', 'type', 'button')
       cy.get('#updateBtn').should('be.visible')
@@ -382,7 +382,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
         fixture: 'binance-api-success.json'
       }).as('binanceAPI')
 
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceAPI')
 
       // Check number formatting with commas
@@ -406,7 +406,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
         fixture: 'binance-zero-values.json'
       }).as('binanceZero')
 
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceZero')
 
       // App should still display values, even if zero
@@ -419,7 +419,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
         fixture: 'binance-api-success.json'
       }).as('binanceAPI')
 
-      cy.visit('./index.html')
+      cy.visit('./src/index.html')
       cy.wait('@binanceAPI')
 
       // Verify large number formatting (billions)
