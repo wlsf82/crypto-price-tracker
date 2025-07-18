@@ -13,26 +13,27 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
   describe('Initial page load', () => {
     it('should display the page title and initial loading state', () => {
       cy.title().should('eq', 'Bitcoin Price Tracker')
-      cy.get('h1').should('contain', 'Bitcoin Price Tracker')
-      cy.get('#price').should('contain', 'Loading...')
-      cy.get('#change').should('contain', '--')
-      cy.get('#changePercent').should('contain', '--%')
-      cy.get('#lastUpdated').should('contain', '--')
+      cy.contains('h1', 'Bitcoin Price Tracker').should('be.visible')
+      cy.contains('#price', 'Loading...').should('be.visible')
+      cy.contains('#change', '--').should('be.visible')
+      cy.contains('#changePercent', '--%').should('be.visible')
+      cy.contains('#lastUpdated', '--').should('be.visible')
       // Note: Status changes immediately from 'Ready' due to auto-fetch,
       // so we just check it's not empty
       cy.get('#statusText').should('not.be.empty')
     })
 
     it('should display all market statistics placeholders', () => {
-      cy.get('#high24h').should('contain', '--')
-      cy.get('#low24h').should('contain', '--')
-      cy.get('#marketCap').should('contain', '--')
-      cy.get('#volume24h').should('contain', '--')
+      cy.contains('#high24h', '--').should('be.visible')
+      cy.contains('#low24h', '--').should('be.visible')
+      cy.contains('#marketCap', '--').should('be.visible')
+      cy.contains('#volume24h', '--').should('be.visible')
     })
 
     it('should have update button enabled', () => {
-      cy.get('#updateBtn').should('be.enabled')
-      cy.get('#updateBtn').should('contain', 'Update Data')
+      cy.contains('#updateBtn', 'Update Data')
+        .should('be.visible')
+        .and('be.enabled')
     })
   })
 
@@ -47,22 +48,22 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
       cy.wait('@binanceAPI')
 
       // Verify price display
-      cy.get('#price').should('contain', '51,111.10')
+      cy.contains('#price', '51,111.10').should('be.visible')
 
       // Verify positive change display (from fixture: priceChange: "1234.56")
-      cy.get('#change').should('contain', '+$1,234.56')
-      cy.get('#changePercent').should('contain', '+2.45%') // Use exact percentage from fixture
+      cy.contains('#change', '+$1,234.56').should('be.visible')
+      cy.contains('#changePercent', '+2.45%').should('be.visible') // Use exact percentage from fixture
       cy.get('#change').should('have.class', 'positive')
       cy.get('#changePercent').should('have.class', 'positive')
 
       // Verify market data
-      cy.get('#high24h').should('contain', '52,000.00')
-      cy.get('#low24h').should('contain', '49,500.00')
-      cy.get('#marketCap').should('contain', '$1.01T') // 51111.10 * 19700000
-      cy.get('#volume24h').should('contain', '$630.79B')
+      cy.contains('#high24h', '52,000.00').should('be.visible')
+      cy.contains('#low24h', '49,500.00').should('be.visible')
+      cy.contains('#marketCap', '$1.01T').should('be.visible') // 51111.10 * 19700000
+      cy.contains('#volume24h', '$630.79B').should('be.visible')
 
       // Verify status
-      cy.get('#statusText').should('contain', 'Data updated')
+      cy.contains('#statusText', 'Data updated').should('be.visible')
       cy.get('#statusDot').should('have.class', 'connected')
 
       // Verify last updated time is displayed
@@ -82,8 +83,8 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
       cy.wait('@binanceFail')
       cy.wait('@coingeckoAPI')
 
-      cy.get('#price').should('contain', '51,111.10')
-      cy.get('#statusText').should('contain', 'Data updated')
+      cy.contains('#price', '51,111.10').should('be.visible')
+      cy.contains('#statusText', 'Data updated').should('be.visible')
     })
 
     it('should fallback to Kraken when both Binance and CoinGecko fail', () => {
@@ -104,12 +105,12 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
       cy.wait('@coingeckoFail')
       cy.wait('@krakenAPI')
 
-      cy.get('#price').should('contain', '51,111.10')
-      cy.get('#change').should('contain', '+$1,234.56') // 51111.10 - 49876.54
-      cy.get('#changePercent').should('contain', '+2.48%') // Calculated: (1234.56 / 49876.54) * 100
-      cy.get('#high24h').should('contain', '52,100.00') // Kraken h[1] value
-      cy.get('#low24h').should('contain', '49,400.00') // Kraken l[1] value
-      cy.get('#statusText').should('contain', 'Data updated')
+      cy.contains('#price', '51,111.10').should('be.visible')
+      cy.contains('#change', '+$1,234.56').should('be.visible') // 51111.10 - 49876.54
+      cy.contains('#changePercent', '+2.48%').should('be.visible') // Calculated: (1234.56 / 49876.54) * 100
+      cy.contains('#high24h', '52,100.00').should('be.visible') // Kraken h[1] value
+      cy.contains('#low24h', '49,400.00').should('be.visible') // Kraken l[1] value
+      cy.contains('#statusText', 'Data updated').should('be.visible')
     })
 
     it('should handle negative price changes correctly', () => {
@@ -120,8 +121,8 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
       cy.visit(url)
       cy.wait('@binanceNegative')
 
-      cy.get('#change').should('contain', '-$2,500.75') // From fixture
-      cy.get('#changePercent').should('contain', '-4.67%') // From fixture
+      cy.contains('#change', '-$2,500.75').should('be.visible') // From fixture
+      cy.contains('#changePercent', '-4.67%').should('be.visible') // From fixture
       cy.get('#change').should('have.class', 'negative')
       cy.get('#changePercent').should('have.class', 'negative')
     })
@@ -154,7 +155,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
       cy.wait('@coingeckoFail')
       cy.wait('@krakenFail')
 
-      cy.get('#statusText').should('contain', 'Update failed - check connection')
+      cy.contains('#statusText', 'Update failed - check connection').should('be.visible')
       cy.get('#statusDot').should('have.class', 'error')
     })
 
@@ -176,7 +177,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
       cy.wait('@coingeckoFail')
       cy.wait('@krakenFail')
 
-      cy.get('#statusText').should('contain', 'Update failed - check connection')
+      cy.contains('#statusText', 'Update failed - check connection').should('be.visible')
       cy.get('#statusDot').should('have.class', 'error')
     })
 
@@ -184,7 +185,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
       cy.mockAllApisError()
       cy.visit(url)
 
-      cy.get('#statusText').should('contain', 'Update failed - check connection')
+      cy.contains('#statusText', 'Update failed - check connection').should('be.visible')
       cy.get('#statusDot').should('have.class', 'error')
     })
   })
@@ -226,7 +227,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
       cy.get('#updateBtn').should('have.class', 'loading')
 
       // Status should show "Fetching data..."
-      cy.get('#statusText').should('contain', 'Fetching data...')
+      cy.contains('#statusText', 'Fetching data...').should('be.visible')
       cy.get('#statusDot').should('have.class', 'connecting')
 
       cy.wait('@binanceAPI')
@@ -234,7 +235,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
       // Button should be enabled again after completion
       cy.get('#updateBtn').should('be.enabled')
       cy.get('#updateBtn').should('not.have.class', 'loading')
-      cy.get('#statusText').should('contain', 'Data updated')
+      cy.contains('#statusText', 'Data updated').should('be.visible')
     })
 
     it('should prevent multiple simultaneous requests', () => {
@@ -307,7 +308,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
       // Click update button to verify it works
       cy.get('#updateBtn').click()
       cy.wait('@binanceAPI')
-      cy.get('#statusText').should('contain', 'Data updated')
+      cy.contains('#statusText', 'Data updated').should('be.visible')
     })
   })
 
@@ -322,7 +323,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
         win.dispatchEvent(new Event('offline'))
       })
 
-      cy.get('#statusText').should('contain', 'Offline')
+      cy.contains('#statusText', 'Offline').should('be.visible')
       cy.get('#statusDot').should('have.class', 'error')
     })
 
@@ -331,7 +332,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
       cy.window().then((win) => {
         win.dispatchEvent(new Event('offline'))
       })
-      cy.get('#statusText').should('contain', 'Offline')
+      cy.contains('#statusText', 'Offline').should('be.visible')
 
       // Then come back online
       cy.window().then((win) => {
@@ -344,7 +345,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
 
     it('should handle offline and online events (custom commands)', () => {
       cy.goOffline()
-      cy.get('#statusText').should('contain', 'Offline')
+      cy.contains('#statusText', 'Offline').should('be.visible')
       cy.get('#statusDot').should('have.class', 'error')
 
       cy.goOnline()
@@ -380,17 +381,17 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
       cy.wait('@binanceAPI')
 
       // Check number formatting with commas
-      cy.get('#price').should('contain', '51,111.10')
-      cy.get('#high24h').should('contain', '52,000.00')
-      cy.get('#low24h').should('contain', '49,500.00')
+      cy.contains('#price', '51,111.10').should('be.visible')
+      cy.contains('#high24h', '52,000.00').should('be.visible')
+      cy.contains('#low24h', '49,500.00').should('be.visible')
 
       // Check currency formatting
-      cy.get('#change').should('contain', '$')
-      cy.get('#marketCap').should('contain', '$')
-      cy.get('#volume24h').should('contain', '$630.79B')
+      cy.contains('#change', '$').should('be.visible')
+      cy.contains('#marketCap', '$').should('be.visible')
+      cy.contains('#volume24h', '$630.79B').should('be.visible')
 
       // Check percentage formatting
-      cy.get('#changePercent').should('contain', '%')
+      cy.contains('#changePercent', '%').should('be.visible')
     })
   })
 
@@ -405,7 +406,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
 
       // App should still display values, even if zero
       cy.get('#price').should('not.contain', 'Loading...')
-      cy.get('#statusText').should('contain', 'Data updated')
+      cy.contains('#statusText', 'Data updated').should('be.visible')
     })
 
     it('should handle very large numbers correctly', () => {
@@ -417,9 +418,9 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
       cy.wait('@binanceAPI')
 
       // Verify large number formatting (billions)
-      cy.get('#volume24h').should('contain', 'B')
+      cy.contains('#volume24h', 'B').should('be.visible')
       // Verify trillion formatting for market cap
-      cy.get('#marketCap').should('contain', 'T')
+      cy.contains('#marketCap', 'T').should('be.visible')
     })
   })
 })
