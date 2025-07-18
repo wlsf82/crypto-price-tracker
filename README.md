@@ -1,18 +1,20 @@
-# Bitcoin Price Tracker PWA
+# Cryptocurrency Price Tracker PWA
 
 [![CI/CD](https://github.com/wlsf82/bitcoin-price/actions/workflows/cicd.yml/badge.svg)](https://github.com/wlsf82/bitcoin-price/actions)
 
-A Progressive Web App that tracks Bitcoin prices using multiple APIs with automatic fallback: Binance, CoinGecko, or Kraken.
+A Progressive Web App that tracks cryptocurrency prices for Bitcoin (BTC), Ethereum (ETH), and Solana (SOL) using multiple APIs with automatic fallback: Binance, CoinGecko, or Kraken.
 
 ## Features
 
-- ✅ On-demand Bitcoin price updates with manual refresh button
+- ✅ Multi-cryptocurrency support: Bitcoin (BTC), Ethereum (ETH), and Solana (SOL)
+- ✅ Cryptocurrency selection with easy switching between currencies
+- ✅ On-demand price updates with manual refresh button
 - ✅ 24-hour price change tracking with visual indicators
 - ✅ Market data including 24h high/low, market cap, and volume
 - ✅ Progressive Web App (PWA) capabilities
 - ✅ Offline support with Service Worker
 - ✅ Mobile-responsive design
-- ✅ Dark theme with Bitcoin orange accents
+- ✅ Dark theme with cryptocurrency-themed accents
 - ✅ Visual price change animations
 - ✅ Connection status indicator
 
@@ -36,17 +38,23 @@ Quick steps:
 
 ## Data Sources
 
-This app uses multiple reliable APIs with an automatic fallback system:
+This app uses multiple reliable APIs with an automatic fallback system for all supported cryptocurrencies:
 
-- **Primary**: [Binance API](https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT) - Real-time ticker data with excellent CORS support
+- **Primary**: [Binance API](https://api.binance.com/api/v3/ticker/24hr) - Real-time ticker data with excellent CORS support
+  - Bitcoin: `BTCUSDT`
+  - Ethereum: `ETHUSDT`
+  - Solana: `SOLUSDT`
 - **Secondary**: [CoinGecko API](https://coingecko.com/) - Comprehensive market data via CORS proxy (AllOrigins)
-- **Fallback**: [Kraken API](https://api.kraken.com/0/public/Ticker?pair=XBTUSD) - Reliable exchange data
+- **Fallback**: [Kraken API](https://api.kraken.com/0/public/Ticker) - Reliable exchange data
+  - Bitcoin: `XBTUSD`
+  - Ethereum: `ETHUSD`
+  - Solana: `SOLUSD`
 
 ### API Features
 
-- Bitcoin price in USD
-- 24-hour price changes and percentage
-- Market data (market cap, volume, 24h high/low)
+- Multi-cryptocurrency price tracking (Bitcoin, Ethereum, Solana) in USD
+- 24-hour price changes and percentage for each cryptocurrency
+- Market data (market cap, volume, 24h high/low) for all supported currencies
 - CORS-friendly endpoints (perfect for static hosting)
 - Automatic fallback system for maximum reliability
 - Manual data refresh on user request
@@ -60,11 +68,12 @@ This app uses multiple reliable APIs with an automatic fallback system:
 
 ## Technical Details
 
+- **Supported Cryptocurrencies**: Bitcoin (BTC), Ethereum (ETH), Solana (SOL)
 - **Update Method**: Manual refresh via button click (no automatic updates)
 - **API Strategy**: Primary API with automatic fallback to secondary and tertiary APIs
-- **Primary API**: Binance 24hr ticker endpoint
+- **Primary API**: Binance 24hr ticker endpoint for multiple trading pairs
 - **Secondary API**: CoinGecko via AllOrigins CORS proxy
-- **Fallback API**: Kraken public ticker endpoint
+- **Fallback API**: Kraken public ticker endpoint for multiple pairs
 - **Caching Strategy**: Cache first for static resources, network first for API calls
 - **Browser Support**: Modern browsers with Service Worker support
 
@@ -131,7 +140,7 @@ Modify the CSS custom properties in `styles.css` to change colors and themes:
 
 ```css
 :root {
-  --bitcoin-orange: #f7931a;
+  --primary-color: #f7931a;  /* Can be customized for different crypto themes */
   --dark-bg: #1a1a1a;
   --card-bg: #2d2d2d;
   /* ... other variables */
