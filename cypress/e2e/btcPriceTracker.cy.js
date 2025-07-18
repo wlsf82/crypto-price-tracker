@@ -18,7 +18,7 @@ describe('Bitcoin Price Tracker - Comprehensive Test Suite', () => {
       cy.get('#change').should('contain', '--')
       cy.get('#changePercent').should('contain', '--%')
       cy.get('#lastUpdated').should('contain', '--')
-      // Note: Status changes immediately from 'Ready' due to auto-fetch, 
+      // Note: Status changes immediately from 'Ready' due to auto-fetch,
       // so we just check it's not empty
       cy.get('#statusText').should('not.be.empty')
     })
