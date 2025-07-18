@@ -70,17 +70,38 @@ This app uses multiple reliable APIs with an automatic fallback system:
 ## File Structure
 
 ```text
-bitcoin-price/src/
-├── index.html           # Main HTML file
-├── styles.css           # CSS styles
-├── app.js               # Main JavaScript application
-├── sw.js                # Service Worker for PWA functionality
-├── manifest.json        # PWA manifest file
-├── icons/               # App icons (SVG format)
-│   ├── icon-192x192.svg
-│   └── icon-512x512.svg
-├── favicon.svg          # App favicon
-└── README.md            # This file
+bitcoin-price/
+├── src/                                  # Main application source code
+│   ├── index.html                        # Main HTML file
+│   ├── styles.css                        # CSS styles
+│   ├── app.js                            # Main JavaScript application
+│   ├── sw.js                             # Service Worker for PWA functionality
+│   ├── manifest.json                     # PWA manifest file
+│   ├── favicon.svg                       # App favicon
+│   └── icons/                            # App icons (SVG format)
+│       ├── icon-192x192.svg
+│       └── icon-512x512.svg
+├── cypress/                              # Cypress E2E testing framework
+│   ├── e2e/                              # End-to-end test files
+│   │   └── btcPriceTracker.cy.js
+│   ├── fixtures/                         # Test data fixtures
+│   │   ├── binance-api-error.json
+│   │   ├── binance-api-success.json
+│   │   ├── binance-negative-change.json
+│   │   ├── binance-zero-values.json
+│   │   ├── coingecko-proxy-error.json
+│   │   ├── coingecko-proxy-success.json
+│   │   ├── kraken-api-error.json
+│   │   └── kraken-api-success.json
+│   └── support/                          # Cypress support files
+│       ├── commands.js                   # Custom Cypress commands
+│       └── e2e.js                        # E2E test configuration
+├── cypress.config.js                     # Cypress configuration
+├── package.json                          # Node.js dependencies and scripts
+├── package-lock.json                     # Lockfile for npm dependencies
+├── generate-icons.html                   # Icon generation utility
+├── LICENSE                               # MIT License
+└── README.md                             # Project documentation
 ```
 
 ## Customization
