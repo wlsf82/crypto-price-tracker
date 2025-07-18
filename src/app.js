@@ -14,7 +14,7 @@ class CryptoPriceTracker {
         binanceSymbol: 'BTCUSDT',
         krakenSymbol: 'XBTUSD',
         coingeckoId: 'bitcoin',
-        circulatingSupply: 19700000
+        circulatingSupply: 19700000 // Approximate BTC circulating supply (as of 2024)
       },
       ethereum: {
         name: 'Ethereum',
@@ -24,7 +24,7 @@ class CryptoPriceTracker {
         binanceSymbol: 'ETHUSDT',
         krakenSymbol: 'XETHZUSD',
         coingeckoId: 'ethereum',
-        circulatingSupply: 120000000
+        circulatingSupply: 120000000 // Approximate ETH circulating supply (as of 2024)
       },
       solana: {
         name: 'Solana',
@@ -34,7 +34,7 @@ class CryptoPriceTracker {
         binanceSymbol: 'SOLUSDT',
         krakenSymbol: 'SOLUSD',
         coingeckoId: 'solana',
-        circulatingSupply: 400000000
+        circulatingSupply: 400000000 // Approximate SOL circulating supply (as of 2024)
       }
     };
 
