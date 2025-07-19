@@ -8,6 +8,7 @@ A Progressive Web App that tracks cryptocurrency prices for Bitcoin (BTC), Ether
 
 - ✅ Multi-cryptocurrency support: Bitcoin (BTC), Ethereum (ETH), and Solana (SOL)
 - ✅ Cryptocurrency selection with easy switching between currencies
+- ✅ **Price alerts with push notifications** - Set custom alerts for price thresholds
 - ✅ On-demand price updates with manual refresh button
 - ✅ 24-hour price change tracking with visual indicators
 - ✅ Market data including 24h high/low, market cap, and volume
@@ -65,6 +66,7 @@ This app uses multiple reliable APIs with an automatic fallback system for all s
 - **App-like Experience**: Can be installed on mobile and desktop
 - **Fast Loading**: Resources are cached for quick loading
 - **Responsive Design**: Works on all screen sizes
+- **Push Notifications**: Browser notifications for price alerts (when permission granted)
 
 ## Technical Details
 
@@ -133,6 +135,16 @@ The app fetches data when:
 - User comes back online (after being offline)
 
 There is no automatic periodic refresh - all updates are user-initiated.
+
+### Price Alerts
+
+Users can set custom price alerts for any supported cryptocurrency:
+
+- **Alert Conditions**: Set alerts for when price goes above or below a specified value
+- **Persistent Storage**: Alerts are saved in browser localStorage and persist across sessions
+- **Push Notifications**: Receive browser notifications when alert conditions are met (requires notification permission)
+- **Multiple Alerts**: Set multiple alerts per cryptocurrency with proper notification stacking
+- **User Control**: Alerts trigger every time conditions are met until manually removed
 
 ### Styling
 
