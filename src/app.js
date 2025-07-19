@@ -436,7 +436,7 @@ class CryptoPriceTracker {
     const priceValue = parseFloat(this.elements.alertPrice.value);
 
     if (!priceValue || priceValue <= 0) {
-      alert('Please enter a valid price');
+      this.showAlertConfirmation('Please enter a valid price', 'alert');
       return;
     }
 
@@ -445,7 +445,7 @@ class CryptoPriceTracker {
       await this.requestNotificationPermission();
     }
 
-    const alert = {
+    const priceAlert = {
       id: Date.now().toString(),
       crypto: this.currentCrypto,
       condition: condition,
@@ -453,7 +453,7 @@ class CryptoPriceTracker {
       created: new Date().toISOString()
     };
 
-    this.alerts.push(alert);
+    this.alerts.push(priceAlert);
     this.saveAlertsToStorage();
     this.renderAlerts();
 
@@ -467,26 +467,26 @@ class CryptoPriceTracker {
   }
 
   removeAlert(alertId) {
-    this.alerts = this.alerts.filter(alert => alert.id !== alertId);
+    this.alerts = this.alerts.filter(alertItem => alertItem.id !== alertId);
     this.saveAlertsToStorage();
     this.renderAlerts();
   }
 
   checkAlerts(currentPrice) {
-    const currentCryptoAlerts = this.alerts.filter(alert => alert.crypto === this.currentCrypto);
+    const currentCryptoAlerts = this.alerts.filter(alertItem => alertItem.crypto === this.currentCrypto);
     const triggeredAlerts = [];
 
-    currentCryptoAlerts.forEach(alert => {
+    currentCryptoAlerts.forEach(alertItem => {
       let shouldTrigger = false;
 
-      if (alert.condition === 'above' && currentPrice >= alert.price) {
+      if (alertItem.condition === 'above' && currentPrice >= alertItem.price) {
         shouldTrigger = true;
-      } else if (alert.condition === 'below' && currentPrice <= alert.price) {
+      } else if (alertItem.condition === 'below' && currentPrice <= alertItem.price) {
         shouldTrigger = true;
       }
 
       if (shouldTrigger) {
-        triggeredAlerts.push(alert);
+        triggeredAlerts.push(alertItem);
       }
     });
 
@@ -496,14 +496,14 @@ class CryptoPriceTracker {
     }
   }
 
-  triggerAlert(alert, currentPrice, notificationIndex = 0) {
-    const cryptoConfig = this.cryptoConfig[alert.crypto];
+  triggerAlert(alertItem, currentPrice, notificationIndex = 0) {
+    const cryptoConfig = this.cryptoConfig[alertItem.crypto];
     const title = `${cryptoConfig.name} Price Alert`;
-    const body = `${cryptoConfig.name} is now ${alert.condition} $${this.formatCurrency(alert.price)}! Current price: $${this.formatCurrency(currentPrice)}`;
+    const body = `${cryptoConfig.name} is now ${alertItem.condition} $${this.formatCurrency(alertItem.price)}! Current price: $${this.formatCurrency(currentPrice)}`;
 
     // Show browser notification if permission granted
     if (this.notificationPermission === 'granted') {
-      this.showNotification(title, body, alert.id);
+      this.showNotification(title, body, alertItem.id);
     }
 
     // Also show an in-app alert with calculated position
@@ -512,23 +512,24 @@ class CryptoPriceTracker {
 
   triggerMultipleAlerts(triggeredAlerts, currentPrice) {
     // Show individual notifications for each alert with calculated positions
-    triggeredAlerts.forEach((alert, index) => {
+    triggeredAlerts.forEach((alertItem, index) => {
       setTimeout(() => {
-        this.triggerAlert(alert, currentPrice, index);
+        this.triggerAlert(alertItem, currentPrice, index);
       }, index * 100); // Reduced stagger time since positioning is now calculated
     });
   }
 
-  showNotification(title, body, tag = 'price-alert') {
+  showNotification(title, body, tag = null) {
     if ('serviceWorker' in navigator && this.notificationPermission === 'granted') {
       navigator.serviceWorker.ready.then(registration => {
-        // For browsers that support it, we could use service worker push
-        // For now, let's use the simpler approach
-        new Notification(title, {
+        // Generate unique tag if not provided to allow multiple notifications
+        const uniqueTag = tag || `price-alert-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+
+        registration.showNotification(title, {
           body: body,
           icon: './icons/icon-192x192.svg',
           badge: './icons/icon-192x192.svg',
-          tag: tag, // Use unique tag to allow multiple notifications
+          tag: uniqueTag,
           requireInteraction: true
         });
       });
@@ -590,27 +591,27 @@ class CryptoPriceTracker {
   }
 
   renderAlerts() {
-    const currentCryptoAlerts = this.alerts.filter(alert => alert.crypto === this.currentCrypto);
+    const currentCryptoAlerts = this.alerts.filter(alertItem => alertItem.crypto === this.currentCrypto);
 
     if (currentCryptoAlerts.length === 0) {
       this.elements.alertsList.innerHTML = '<div class="alerts-empty">No price alerts set for ' + this.cryptoConfig[this.currentCrypto].name + '</div>';
       return;
     }
 
-    this.elements.alertsList.innerHTML = currentCryptoAlerts.map(alert => {
+    this.elements.alertsList.innerHTML = currentCryptoAlerts.map(alertItem => {
       return `
-        <div class="alert-item active" data-alert-id="${alert.id}">
+        <div class="alert-item active" data-alert-id="${alertItem.id}">
           <div class="alert-details">
             <div class="alert-condition">
-              ${this.cryptoConfig[alert.crypto].icon} ${alert.condition.charAt(0).toUpperCase() + alert.condition.slice(1)} $${this.formatCurrency(alert.price)}
+              ${this.cryptoConfig[alertItem.crypto].icon} ${alertItem.condition.charAt(0).toUpperCase() + alertItem.condition.slice(1)} $${this.formatCurrency(alertItem.price)}
             </div>
             <div class="alert-crypto">
-              ${this.cryptoConfig[alert.crypto].name} • Created ${new Date(alert.created).toLocaleDateString()}
+              ${this.cryptoConfig[alertItem.crypto].name} • Created ${new Date(alertItem.created).toLocaleDateString()}
             </div>
             <div class="alert-status active">🔔 Active</div>
           </div>
           <div class="alert-actions">
-            <button type="button" class="remove-alert-btn" onclick="window.tracker.removeAlert('${alert.id}')">
+            <button type="button" class="remove-alert-btn" onclick="window.tracker.removeAlert('${alertItem.id}')">
               ❌ Remove
             </button>
           </div>
