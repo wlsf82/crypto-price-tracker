@@ -70,3 +70,41 @@ self.addEventListener('activate', (event) => {
   })
   );
 });
+
+// Handle push notifications
+self.addEventListener('push', (event) => {
+  const data = event.data ? event.data.json() : {};
+  const title = data.title || 'Price Alert';
+  const options = {
+    body: data.body || 'Your price alert has been triggered!',
+    icon: './icons/icon-192x192.svg',
+    badge: './icons/icon-192x192.svg',
+    tag: 'price-alert',
+    requireInteraction: true,
+    actions: [
+      {
+        action: 'view',
+        title: 'View App'
+      },
+      {
+        action: 'dismiss',
+        title: 'Dismiss'
+      }
+    ]
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(title, options)
+  );
+});
+
+// Handle notification click
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  if (event.action === 'view') {
+    event.waitUntil(
+      clients.openWindow('/')
+    );
+  }
+});

@@ -92,6 +92,26 @@
           </div>
         </div>
       </section>
+
+      <section class="alerts-section">
+        <h2 class="alerts-title">Price Alerts</h2>
+        <div class="alert-form">
+          <div class="alert-input-group">
+            <select id="alertCondition" class="alert-input">
+              <option value="above">Above</option>
+              <option value="below">Below</option>
+            </select>
+            <input type="number" id="alertPrice" placeholder="Price in USD" step="0.01" min="0" class="alert-input">
+            <button type="button" id="addAlertBtn" class="add-alert-btn">
+              <span class="alert-icon">🔔</span>
+              Add Alert
+            </button>
+          </div>
+        </div>
+        <div class="alerts-list" id="alertsList">
+          <!-- Active alerts will be displayed here -->
+        </div>
+      </section>
     </main>
 
     <footer>

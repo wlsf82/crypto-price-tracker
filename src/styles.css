@@ -430,3 +430,222 @@ footer a:hover {
     font-size: 0.9rem;
   }
 }
+
+/* Price Alerts Section */
+.alerts-section {
+  margin-top: 2rem;
+}
+
+.alerts-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.alert-form {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+}
+
+.alert-input-group {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.alert-input {
+  background: var(--dark-bg);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 0.75rem;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  flex: 1;
+  min-width: 120px;
+}
+
+.alert-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(247, 147, 26, 0.1);
+}
+
+.alert-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.add-alert-btn {
+  background: var(--gradient);
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.add-alert-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(247, 147, 26, 0.3);
+}
+
+.add-alert-btn:active {
+  transform: translateY(0);
+}
+
+.add-alert-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.alert-icon {
+  font-size: 1rem;
+}
+
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.alert-item {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow);
+  border-left: 4px solid var(--primary-color);
+  transition: all 0.3s ease;
+}
+
+.alert-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+}
+
+.alert-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.alert-condition {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.alert-crypto {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.alert-item {
+  border-left-color: var(--primary-color);
+}
+
+.alert-status {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  color: var(--primary-color);
+}
+
+.alert-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.remove-alert-btn {
+  background: var(--red);
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  color: white;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.remove-alert-btn:hover {
+  background: #e55555;
+  transform: translateY(-1px);
+}
+
+.alerts-empty {
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 2rem;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive design for alerts */
+@media (max-width: 768px) {
+  .alert-input-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .alert-input {
+    flex: none;
+  }
+
+  .add-alert-btn {
+    justify-content: center;
+  }
+
+  .alert-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .alert-actions {
+    align-self: stretch;
+    justify-content: flex-end;
+  }
+}
+
+/* Alert notification animations */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
