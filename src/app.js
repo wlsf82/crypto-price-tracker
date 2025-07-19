@@ -3,6 +3,8 @@ class CryptoPriceTracker {
     this.currentCrypto = 'bitcoin';
     this.lastPrice = null;
     this.isLoading = false;
+    this.alerts = [];
+    this.notificationPermission = 'default';
 
     // Cryptocurrency configurations
     this.cryptoConfig = {
@@ -42,6 +44,14 @@ class CryptoPriceTracker {
     this.registerServiceWorker();
     this.setupEventListeners();
     this.updateTheme();
+
+    // Initialize notification permission status without requesting
+    this.initializeNotificationPermission();
+
+    // Load alerts after everything is initialized
+    this.alerts = this.loadAlertsFromStorage();
+    this.renderAlerts();
+
     this.fetchCryptoPrice(); // Initial fetch only
   }
 
@@ -60,7 +70,11 @@ class CryptoPriceTracker {
       updateBtn: document.getElementById('updateBtn'),
       cryptoIcon: document.getElementById('cryptoIcon'),
       appTitle: document.getElementById('appTitle'),
-      cryptoButtons: document.querySelectorAll('.crypto-btn')
+      cryptoButtons: document.querySelectorAll('.crypto-btn'),
+      alertCondition: document.getElementById('alertCondition'),
+      alertPrice: document.getElementById('alertPrice'),
+      addAlertBtn: document.getElementById('addAlertBtn'),
+      alertsList: document.getElementById('alertsList')
     };
   }
 
@@ -74,6 +88,17 @@ class CryptoPriceTracker {
         const crypto = e.currentTarget.dataset.crypto;
         this.switchCrypto(crypto);
       });
+    });
+
+    // Alert form listeners
+    this.elements.addAlertBtn.addEventListener('click', () => {
+      this.addAlert();
+    });
+
+    this.elements.alertPrice.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        this.addAlert();
+      }
     });
   }
 
@@ -91,6 +116,7 @@ class CryptoPriceTracker {
     this.currentCrypto = crypto;
     this.lastPrice = null;
     this.updateTheme();
+    this.renderAlerts();
     this.fetchCryptoPrice();
   }
 
@@ -309,6 +335,10 @@ class CryptoPriceTracker {
     }
 
     this.elements.price.textContent = formattedPrice;
+
+    // Check alerts before updating lastPrice
+    this.checkAlerts(newPrice);
+
     this.lastPrice = newPrice;
   }
 
@@ -382,18 +412,243 @@ class CryptoPriceTracker {
       return `$${this.formatCurrency(num)}`;
     }
   }
+
+  // Alert Management Methods
+  initializeNotificationPermission() {
+    if ('Notification' in window) {
+      this.notificationPermission = Notification.permission;
+    }
+  }
+
+  async requestNotificationPermission() {
+    if ('Notification' in window) {
+      // Only request permission if it hasn't been determined yet
+      if (this.notificationPermission === 'default') {
+        this.notificationPermission = await Notification.requestPermission();
+      }
+      return this.notificationPermission;
+    }
+    return 'denied';
+  }
+
+  async addAlert() {
+    const condition = this.elements.alertCondition.value;
+    const priceValue = parseFloat(this.elements.alertPrice.value);
+
+    if (!priceValue || priceValue <= 0) {
+      alert('Please enter a valid price');
+      return;
+    }
+
+    // Request notification permission when creating first alert
+    if (this.notificationPermission === 'default') {
+      await this.requestNotificationPermission();
+    }
+
+    const alert = {
+      id: Date.now().toString(),
+      crypto: this.currentCrypto,
+      condition: condition,
+      price: priceValue,
+      created: new Date().toISOString()
+    };
+
+    this.alerts.push(alert);
+    this.saveAlertsToStorage();
+    this.renderAlerts();
+
+    // Clear form
+    this.elements.alertPrice.value = '';
+
+    // Show confirmation with permission status
+    const permissionNote = this.notificationPermission === 'granted' ?
+      '' : ' (Enable notifications in your browser to receive alerts)';
+    this.showAlertConfirmation(`Alert added: ${this.cryptoConfig[this.currentCrypto].name} ${condition} $${this.formatCurrency(priceValue)}${permissionNote}`);
+  }
+
+  removeAlert(alertId) {
+    this.alerts = this.alerts.filter(alert => alert.id !== alertId);
+    this.saveAlertsToStorage();
+    this.renderAlerts();
+  }
+
+  checkAlerts(currentPrice) {
+    const currentCryptoAlerts = this.alerts.filter(alert => alert.crypto === this.currentCrypto);
+    const triggeredAlerts = [];
+
+    currentCryptoAlerts.forEach(alert => {
+      let shouldTrigger = false;
+
+      if (alert.condition === 'above' && currentPrice >= alert.price) {
+        shouldTrigger = true;
+      } else if (alert.condition === 'below' && currentPrice <= alert.price) {
+        shouldTrigger = true;
+      }
+
+      if (shouldTrigger) {
+        triggeredAlerts.push(alert);
+      }
+    });
+
+    // If multiple alerts triggered, show them all
+    if (triggeredAlerts.length > 0) {
+      this.triggerMultipleAlerts(triggeredAlerts, currentPrice);
+    }
+  }
+
+  triggerAlert(alert, currentPrice, notificationIndex = 0) {
+    const cryptoConfig = this.cryptoConfig[alert.crypto];
+    const title = `${cryptoConfig.name} Price Alert`;
+    const body = `${cryptoConfig.name} is now ${alert.condition} $${this.formatCurrency(alert.price)}! Current price: $${this.formatCurrency(currentPrice)}`;
+
+    // Show browser notification if permission granted
+    if (this.notificationPermission === 'granted') {
+      this.showNotification(title, body, alert.id);
+    }
+
+    // Also show an in-app alert with calculated position
+    this.showAlertConfirmation(`🔔 ${body}`, 'alert', notificationIndex);
+  }
+
+  triggerMultipleAlerts(triggeredAlerts, currentPrice) {
+    // Show individual notifications for each alert with calculated positions
+    triggeredAlerts.forEach((alert, index) => {
+      setTimeout(() => {
+        this.triggerAlert(alert, currentPrice, index);
+      }, index * 100); // Reduced stagger time since positioning is now calculated
+    });
+  }
+
+  showNotification(title, body, tag = 'price-alert') {
+    if ('serviceWorker' in navigator && this.notificationPermission === 'granted') {
+      navigator.serviceWorker.ready.then(registration => {
+        // For browsers that support it, we could use service worker push
+        // For now, let's use the simpler approach
+        new Notification(title, {
+          body: body,
+          icon: './icons/icon-192x192.svg',
+          badge: './icons/icon-192x192.svg',
+          tag: tag, // Use unique tag to allow multiple notifications
+          requireInteraction: true
+        });
+      });
+    }
+  }
+
+  showAlertConfirmation(message, type = 'success', predefinedIndex = null) {
+    // Create a temporary notification element
+    const notification = document.createElement('div');
+    notification.className = `alert-notification ${type}`;
+    notification.textContent = message;
+
+    // Calculate position - use predefined index for multiple alerts or count existing
+    const existingNotifications = document.querySelectorAll('.alert-notification');
+    const notificationIndex = predefinedIndex !== null ? predefinedIndex : existingNotifications.length;
+    const notificationHeight = 90; // Increased height to prevent overlap
+    const topOffset = 20 + (notificationIndex * notificationHeight);
+
+    notification.style.cssText = `
+      position: fixed;
+      top: ${topOffset}px;
+      right: 20px;
+      background: ${type === 'alert' ? '#ff6b6b' : '#00d4aa'};
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      z-index: ${1000 + notificationIndex};
+      max-width: 320px;
+      min-height: 60px;
+      font-weight: 600;
+      animation: slideIn 0.3s ease;
+      transition: all 0.3s ease;
+      margin-bottom: 20px;
+      line-height: 1.4;
+    `;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.parentNode.removeChild(notification);
+          // Reposition remaining notifications
+          this.repositionNotifications();
+        }
+      }, 300);
+    }, 6000); // Show for 6 seconds to give time to read multiple notifications
+  }
+
+  repositionNotifications() {
+    const notifications = document.querySelectorAll('.alert-notification');
+    const notificationHeight = 90;
+    notifications.forEach((notification, index) => {
+      notification.style.top = `${20 + (index * notificationHeight)}px`;
+      notification.style.zIndex = `${1000 + index}`;
+    });
+  }
+
+  renderAlerts() {
+    const currentCryptoAlerts = this.alerts.filter(alert => alert.crypto === this.currentCrypto);
+
+    if (currentCryptoAlerts.length === 0) {
+      this.elements.alertsList.innerHTML = '<div class="alerts-empty">No price alerts set for ' + this.cryptoConfig[this.currentCrypto].name + '</div>';
+      return;
+    }
+
+    this.elements.alertsList.innerHTML = currentCryptoAlerts.map(alert => {
+      return `
+        <div class="alert-item active" data-alert-id="${alert.id}">
+          <div class="alert-details">
+            <div class="alert-condition">
+              ${this.cryptoConfig[alert.crypto].icon} ${alert.condition.charAt(0).toUpperCase() + alert.condition.slice(1)} $${this.formatCurrency(alert.price)}
+            </div>
+            <div class="alert-crypto">
+              ${this.cryptoConfig[alert.crypto].name} • Created ${new Date(alert.created).toLocaleDateString()}
+            </div>
+            <div class="alert-status active">🔔 Active</div>
+          </div>
+          <div class="alert-actions">
+            <button type="button" class="remove-alert-btn" onclick="window.tracker.removeAlert('${alert.id}')">
+              ❌ Remove
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  loadAlertsFromStorage() {
+    try {
+      const saved = localStorage.getItem('cryptoAlerts');
+      const alerts = saved ? JSON.parse(saved) : [];
+      return alerts;
+    } catch (error) {
+      console.error('Error loading alerts from storage:', error);
+      return [];
+    }
+  }
+
+  saveAlertsToStorage() {
+    try {
+      localStorage.setItem('cryptoAlerts', JSON.stringify(this.alerts));
+    } catch (error) {
+      console.error('Error saving alerts to storage:', error);
+    }
+  }
 }
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-  const tracker = new CryptoPriceTracker();
+  window.tracker = new CryptoPriceTracker();
 
   // Handle online/offline events
   window.addEventListener('offline', () => {
-    tracker.updateStatus('error', 'Offline');
+    window.tracker.updateStatus('error', 'Offline');
   });
 
   window.addEventListener('online', () => {
-    tracker.updateStatus('connected', 'Back online');
+    window.tracker.updateStatus('connected', 'Back online');
   });
 });
