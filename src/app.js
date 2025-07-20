@@ -5,6 +5,7 @@ class CryptoPriceTracker {
     this.isLoading = false;
     this.alerts = [];
     this.notificationPermission = 'default';
+    this.fetchInterval = null;
 
     // Cryptocurrency configurations
     this.cryptoConfig = {
@@ -53,6 +54,7 @@ class CryptoPriceTracker {
     this.renderAlerts();
 
     this.fetchCryptoPrice(); // Initial fetch only
+    this.startAutoFetch(); // Start automatic fetching every 10 seconds
   }
 
   initializeElements() {
@@ -118,6 +120,9 @@ class CryptoPriceTracker {
     this.updateTheme();
     this.renderAlerts();
     this.fetchCryptoPrice();
+    
+    // Restart auto-fetch for the new cryptocurrency
+    this.startAutoFetch();
   }
 
   updateTheme() {
@@ -156,6 +161,25 @@ class CryptoPriceTracker {
 
   clampRGB(value) {
     return Math.max(0, Math.min(255, value));
+  }
+
+  startAutoFetch() {
+    // Clear existing interval if any
+    if (this.fetchInterval) {
+      clearInterval(this.fetchInterval);
+    }
+    
+    // Start new interval to fetch data every 10 seconds (10000 milliseconds)
+    this.fetchInterval = setInterval(() => {
+      this.fetchCryptoPrice();
+    }, 10000);
+  }
+
+  stopAutoFetch() {
+    if (this.fetchInterval) {
+      clearInterval(this.fetchInterval);
+      this.fetchInterval = null;
+    }
   }
   async registerServiceWorker() {
     if ('serviceWorker' in navigator) {
@@ -647,9 +671,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Handle online/offline events
   window.addEventListener('offline', () => {
     window.tracker.updateStatus('error', 'Offline');
+    window.tracker.stopAutoFetch(); // Stop auto-fetching when offline
   });
 
   window.addEventListener('online', () => {
     window.tracker.updateStatus('connected', 'Back online');
+    window.tracker.fetchCryptoPrice(); // Fetch immediately when back online
+    window.tracker.startAutoFetch(); // Restart auto-fetching
+  });
+
+  // Cleanup interval when page is unloaded
+  window.addEventListener('beforeunload', () => {
+    window.tracker.stopAutoFetch();
   });
 });

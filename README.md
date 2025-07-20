@@ -9,6 +9,7 @@ A Progressive Web App that tracks cryptocurrency prices for Bitcoin (BTC), Ether
 - ✅ Multi-cryptocurrency support: Bitcoin (BTC), Ethereum (ETH), and Solana (SOL)
 - ✅ Cryptocurrency selection with easy switching between currencies
 - ✅ **Price alerts with push notifications** - Set custom alerts for price thresholds
+- ✅ **Automatic price updates every 10 seconds** - Real-time data refresh
 - ✅ On-demand price updates with manual refresh button
 - ✅ 24-hour price change tracking with visual indicators
 - ✅ Market data including 24h high/low, market cap, and volume
@@ -71,7 +72,7 @@ This app uses multiple reliable APIs with an automatic fallback system for all s
 ## Technical Details
 
 - **Supported Cryptocurrencies**: Bitcoin (BTC), Ethereum (ETH), Solana (SOL)
-- **Update Method**: Manual refresh via button click (no automatic updates)
+- **Update Method**: Automatic refresh every 10 seconds + manual refresh via button click
 - **API Strategy**: Primary API with automatic fallback to secondary and tertiary APIs
 - **Primary API**: Binance 24hr ticker endpoint for multiple trading pairs
 - **Secondary API**: CoinGecko via AllOrigins CORS proxy
@@ -126,15 +127,17 @@ The app uses SVG icons for better scalability and smaller file sizes:
 - `icons/icon-192x192.svg` - PWA icon (192x192)
 - `icons/icon-512x512.svg` - PWA icon (512x512)
 
-### Manual Data Updates
+### Automatic Data Updates
 
-The app fetches data when:
+The app fetches data automatically and on-demand:
 
-- Page loads initially
-- User clicks the "Update Data" button
-- User comes back online (after being offline)
+- **Automatic Updates**: Data refreshes every 10 seconds for real-time tracking
+- **Manual Updates**: User can click the "Update Data" button for immediate refresh
+- **Initial Load**: Data fetches when page loads
+- **Cryptocurrency Switching**: Data fetches immediately when switching between currencies
+- **Online/Offline Handling**: Auto-refresh pauses when offline and resumes when back online
 
-There is no automatic periodic refresh - all updates are user-initiated.
+The automatic updates ensure users always have the latest price information without manual intervention.
 
 ### Price Alerts
 
