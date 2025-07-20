@@ -80,7 +80,8 @@ class CryptoPriceTracker {
 
   setupEventListeners() {
     this.elements.updateBtn.addEventListener('click', () => {
-      this.fetchCryptoPrice();
+      // this.fetchCryptoPrice();
+      return
     });
 
     this.elements.cryptoButtons.forEach(btn => {
