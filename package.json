@@ -10,8 +10,8 @@
     "test": "cypress run --record false",
     "test:prod": "cypress run --env environment=prod --record false",
     "test:prod:cloud": "cypress run --record --tag 'prod' --env environment=prod",
-    "cy:open": "cypress open --record false",
-    "cy:open:prod": "cypress open --env environment=prod --record false"
+    "cy:open": "cypress open",
+    "cy:open:prod": "cypress open --env environment=prod"
   },
   "keywords": [
     "bitcoin",
