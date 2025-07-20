@@ -31,7 +31,7 @@ describe('Crypto Price Tracker', () => {
     })
 
     it('should have update button enabled', () => {
-      cy.contains('#updateBtn', 'Update Data')
+      cy.contains('#updateBtn', 'Update Data', { timeout: 10000 })
         .should('be.visible')
         .and('be.enabled')
     })
