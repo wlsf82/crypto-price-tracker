@@ -120,7 +120,7 @@ class CryptoPriceTracker {
     this.updateTheme();
     this.renderAlerts();
     this.fetchCryptoPrice();
-    
+
     // Restart auto-fetch for the new cryptocurrency
     this.startAutoFetch();
   }
@@ -168,7 +168,7 @@ class CryptoPriceTracker {
     if (this.fetchInterval) {
       clearInterval(this.fetchInterval);
     }
-    
+
     // Start new interval to fetch data every 10 seconds (10000 milliseconds)
     this.fetchInterval = setInterval(() => {
       this.fetchCryptoPrice();
