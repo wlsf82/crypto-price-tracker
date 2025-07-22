@@ -105,9 +105,10 @@ header h1 {
 }
 
 .view-btn.active {
-  background: var(--primary-color);
+  background: var(--gradient);
   color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow);
 }
 
 .view-icon {
@@ -666,6 +667,20 @@ footer a:hover {
   background: var(--card-bg);
   border-radius: var(--border-radius);
   border: 2px dashed rgba(255, 255, 255, 0.1);
+}
+
+.sr-only {
+  border: 0 !important;
+  clip: rect(1px, 1px, 1px, 1px) !important;
+  -webkit-clip-path: inset(50%) !important;
+  clip-path: inset(50%) !important;
+  height: 1px !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  position: absolute !important;
+  width: 1px !important;
+  white-space: nowrap !important;
 }
 
 /* Responsive design for alerts */
