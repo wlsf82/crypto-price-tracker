@@ -460,6 +460,21 @@ describe('Crypto Price Tracker', () => {
       // Check percentage formatting
       cy.contains('#changePercent', '%').should('be.visible')
     })
+
+    it('should have alert condition select with proper label association', () => {
+      cy.mockAllApisSuccess()
+      cy.visit(url)
+      cy.wait('@binanceAPI')
+
+      // Verify the select element has a label with the correct for attribute
+      cy.get('label[for="alertCondition"]').should('exist')
+      cy.get('#alertCondition').should('be.visible')
+
+      // Verify the label text is accessible (even if visually hidden)
+      cy.get('label[for="alertCondition"]')
+        .should('contain', 'Alert condition')
+        .and('have.class', 'sr-only')
+    })
   })
 
   context('Data validation', () => {
