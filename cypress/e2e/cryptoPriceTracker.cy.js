@@ -10,7 +10,7 @@ describe('Crypto Price Tracker', () => {
     cy.visit(url)
   })
 
-  describe('Initial page load', () => {
+  context('Initial page load', () => {
     it('should display the page title and initial loading state', () => {
       cy.title().should('eq', 'Crypto Price Tracker')
       cy.contains('h1', 'Crypto Price Tracker').should('be.visible')
@@ -37,7 +37,7 @@ describe('Crypto Price Tracker', () => {
     })
   })
 
-  describe('Successful API responses', () => {
+  context('Successful API responses', () => {
     it('should display Bitcoin price data when Binance API succeeds', () => {
       // Mock successful Binance API response
       cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
@@ -136,7 +136,7 @@ describe('Crypto Price Tracker', () => {
     })
   })
 
-  describe('Error handling', () => {
+  context('Error handling', () => {
     it('should display error when all APIs fail', () => {
       cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
         statusCode: 500
@@ -190,7 +190,7 @@ describe('Crypto Price Tracker', () => {
     })
   })
 
-  describe('Fallback scenarios with custom commands', () => {
+  context('Fallback scenarios with custom commands', () => {
     it('should test CoinGecko fallback', () => {
       cy.mockBinanceFailWithFallback('coingecko')
       cy.visit(url)
@@ -209,7 +209,7 @@ describe('Crypto Price Tracker', () => {
     })
   })
 
-  describe('User interactions', () => {
+  context('User interactions', () => {
     it('should update data when update button is clicked', () => {
       cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
         fixture: 'binance-api-success.json',
@@ -312,7 +312,7 @@ describe('Crypto Price Tracker', () => {
     })
   })
 
-  describe('Offline scenarios', () => {
+  context('Offline scenarios', () => {
     beforeEach(() => {
       cy.visit(url)
     })
@@ -353,7 +353,7 @@ describe('Crypto Price Tracker', () => {
     })
   })
 
-  describe('Accessibility and UI', () => {
+  context('Accessibility and UI', () => {
     it('should have proper heading structure', () => {
       cy.visit(url)
 
@@ -395,7 +395,7 @@ describe('Crypto Price Tracker', () => {
     })
   })
 
-  describe('Data validation', () => {
+  context('Data validation', () => {
     it('should handle zero or negative price values gracefully', () => {
       cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
         fixture: 'binance-zero-values.json'
