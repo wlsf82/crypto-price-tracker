@@ -332,6 +332,40 @@ describe('Crypto Price Tracker', () => {
       cy.wait('@binanceAPI')
       cy.contains('#statusText', 'Data updated').should('be.visible')
     })
+
+    it('should automatically fetch data every 10 seconds', () => {
+      // Setup clock before visiting the page
+      cy.clock()
+
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
+        fixture: 'binance-api-success.json'
+      }).as('binanceAPI')
+
+      cy.visit(url)
+      cy.wait('@binanceAPI') // Wait for initial load
+
+      // Verify initial data is displayed
+      cy.contains('#price', '51,111.10').should('be.visible')
+      cy.contains('#statusText', 'Data updated').should('be.visible')
+
+      // Mock a different response for the auto-fetch
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
+        fixture: 'binance-negative-change.json'
+      }).as('binanceAutoFetch')
+
+      // Fast-forward time by 10 seconds to trigger auto-fetch
+      cy.tick(10000)
+
+      // Wait for the auto-fetch request
+      cy.wait('@binanceAutoFetch')
+
+      // Verify the data was updated automatically
+      cy.contains('#change', '-$2,500.75').should('be.visible') // From binance-negative-change.json
+      cy.contains('#changePercent', '-4.67%').should('be.visible')
+      cy.get('#change').should('have.class', 'negative')
+      cy.get('#changePercent').should('have.class', 'negative')
+      cy.contains('#statusText', 'Data updated').should('be.visible')
+    })
   })
 
   context('Offline scenarios', () => {
