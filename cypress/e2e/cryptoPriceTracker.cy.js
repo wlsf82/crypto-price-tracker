@@ -13,7 +13,7 @@ describe('Crypto Price Tracker', () => {
   describe('Initial page load', () => {
     it('should display the page title and initial loading state', () => {
       cy.title().should('eq', 'Crypto Price Tracker')
-      cy.contains('h1', 'Bitcoin Price Tracker').should('be.visible')
+      cy.contains('h1', 'Crypto Price Tracker').should('be.visible')
       cy.contains('#price', 'Loading...').should('be.visible')
       cy.contains('#change', '--').should('be.visible')
       cy.contains('#changePercent', '--%').should('be.visible')
@@ -357,7 +357,7 @@ describe('Crypto Price Tracker', () => {
     it('should have proper heading structure', () => {
       cy.visit(url)
 
-      cy.contains('h1', 'Bitcoin Price Tracker').should('be.visible')
+      cy.contains('h1', 'Crypto Price Tracker').should('be.visible')
 
       // Check for proper semantic structure
       cy.get('main').should('exist')

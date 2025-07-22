@@ -6,6 +6,9 @@ class CryptoPriceTracker {
     this.alerts = [];
     this.notificationPermission = 'default';
     this.fetchInterval = null;
+    this.currentView = 'single'; // 'single' or 'comparison'
+    this.comparisonData = {}; // Store data for all cryptocurrencies
+    this.selectedCryptos = ['bitcoin', 'ethereum', 'solana']; // Default comparison selection
 
     // Cryptocurrency configurations
     this.cryptoConfig = {
@@ -55,6 +58,20 @@ class CryptoPriceTracker {
 
     this.fetchCryptoPrice(); // Initial fetch only
     this.startAutoFetch(); // Start automatic fetching every 10 seconds
+    this.renderComparisonCards(); // Initialize comparison view
+    this.initializeViewState(); // Set initial view state
+  }
+
+  initializeViewState() {
+    // Ensure the initial view is properly set
+    if (this.currentView === 'single') {
+      this.elements.singleView.classList.remove('hidden');
+      this.elements.comparisonView.classList.add('hidden');
+      const cryptoSelector = document.querySelector('.crypto-selector');
+      if (cryptoSelector) {
+        cryptoSelector.style.display = 'flex';
+      }
+    }
   }
 
   initializeElements() {
@@ -70,13 +87,21 @@ class CryptoPriceTracker {
       marketCap: document.getElementById('marketCap'),
       volume24h: document.getElementById('volume24h'),
       updateBtn: document.getElementById('updateBtn'),
-      cryptoIcon: document.getElementById('cryptoIcon'),
-      appTitle: document.getElementById('appTitle'),
       cryptoButtons: document.querySelectorAll('.crypto-btn'),
       alertCondition: document.getElementById('alertCondition'),
       alertPrice: document.getElementById('alertPrice'),
       addAlertBtn: document.getElementById('addAlertBtn'),
-      alertsList: document.getElementById('alertsList')
+      alertsList: document.getElementById('alertsList'),
+      // View toggle elements
+      viewButtons: document.querySelectorAll('.view-btn'),
+      singleView: document.getElementById('singleView'),
+      comparisonView: document.getElementById('comparisonView'),
+      // Comparison elements
+      comparisonCards: document.getElementById('comparisonCards'),
+      comparisonUpdateBtn: document.getElementById('comparisonUpdateBtn'),
+      comparisonStatusDot: document.getElementById('comparisonStatusDot'),
+      comparisonStatusText: document.getElementById('comparisonStatusText'),
+      cryptoCheckboxes: document.querySelectorAll('.crypto-checkbox input[type="checkbox"]')
     };
   }
 
@@ -89,6 +114,28 @@ class CryptoPriceTracker {
       btn.addEventListener('click', (e) => {
         const crypto = e.currentTarget.dataset.crypto;
         this.switchCrypto(crypto);
+      });
+    });
+
+    // View toggle listeners
+    this.elements.viewButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const view = e.currentTarget.dataset.view;
+        this.switchView(view);
+      });
+    });
+
+    // Comparison update button
+    this.elements.comparisonUpdateBtn.addEventListener('click', () => {
+      if (this.selectedCryptos.length > 0) {
+        this.fetchComparisonData();
+      }
+    });
+
+    // Crypto checkbox listeners for comparison
+    this.elements.cryptoCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', (e) => {
+        this.updateSelectedCryptos();
       });
     });
 
@@ -137,9 +184,6 @@ class CryptoPriceTracker {
     if (metaThemeColor) {
       metaThemeColor.setAttribute('content', config.color);
     }
-
-    this.elements.cryptoIcon.textContent = config.icon;
-    this.elements.appTitle.textContent = `${config.name} Price Tracker`;
   }
 
   /**
@@ -171,7 +215,11 @@ class CryptoPriceTracker {
 
     // Start new interval to fetch data every 10 seconds (10000 milliseconds)
     this.fetchInterval = setInterval(() => {
-      this.fetchCryptoPrice();
+      if (this.currentView === 'single') {
+        this.fetchCryptoPrice();
+      } else {
+        this.fetchComparisonData();
+      }
     }, 10000);
   }
 
@@ -179,6 +227,223 @@ class CryptoPriceTracker {
     if (this.fetchInterval) {
       clearInterval(this.fetchInterval);
       this.fetchInterval = null;
+    }
+  }
+
+  switchView(view) {
+    if (this.currentView === view || this.isLoading) return;
+
+    // Update active view button
+    this.elements.viewButtons.forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.dataset.view === view) {
+        btn.classList.add('active');
+      }
+    });
+
+    this.currentView = view;
+
+    // Show/hide appropriate views
+    if (view === 'single') {
+      this.elements.singleView.classList.remove('hidden');
+      this.elements.comparisonView.classList.add('hidden');
+      document.querySelector('.crypto-selector').style.display = 'flex';
+
+      // Force reset to Bitcoin when switching to single view for consistent state
+      this.currentCrypto = 'bitcoin';
+      this.lastPrice = null;
+
+      // Force update button states
+      this.elements.cryptoButtons.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.crypto === 'bitcoin') {
+          btn.classList.add('active');
+        }
+      });
+
+      // Force update theme and UI
+      this.updateTheme();
+      this.renderAlerts();
+      this.fetchCryptoPrice();
+    } else {
+      this.elements.singleView.classList.add('hidden');
+      this.elements.comparisonView.classList.remove('hidden');
+      document.querySelector('.crypto-selector').style.display = 'none';
+      this.updateComparisonButtonState();
+      this.fetchComparisonData();
+    }
+
+    // Restart auto-fetch for the new view
+    this.startAutoFetch();
+  }
+
+  updateSelectedCryptos() {
+    this.selectedCryptos = Array.from(this.elements.cryptoCheckboxes)
+      .filter(checkbox => checkbox.checked)
+      .map(checkbox => checkbox.dataset.crypto);
+
+    if (this.currentView === 'comparison') {
+      this.updateComparisonButtonState();
+      this.renderComparisonCards();
+      if (this.selectedCryptos.length > 0) {
+        this.fetchComparisonData();
+      } else {
+        this.updateComparisonStatus('error', 'Select at least one cryptocurrency');
+      }
+    }
+  }
+
+  updateComparisonButtonState() {
+    const hasSelection = this.selectedCryptos.length > 0;
+    this.elements.comparisonUpdateBtn.disabled = !hasSelection;
+  }  async fetchComparisonData() {
+    if (this.isLoading || this.selectedCryptos.length === 0) return;
+
+    try {
+      this.isLoading = true;
+      this.updateComparisonStatus('connecting', 'Fetching comparison data...');
+      this.setComparisonButtonLoading(true);
+
+      // Fetch data for all selected cryptocurrencies
+      const promises = this.selectedCryptos.map(crypto => this.fetchCryptoData(crypto));
+      const results = await Promise.allSettled(promises);
+
+      let successCount = 0;
+      results.forEach((result, index) => {
+        const crypto = this.selectedCryptos[index];
+        if (result.status === 'fulfilled' && result.value) {
+          this.comparisonData[crypto] = result.value;
+          successCount++;
+
+          // Check alerts for this cryptocurrency in comparison view
+          this.checkAlertsForCrypto(crypto, result.value.price);
+        } else {
+          console.error(`Failed to fetch data for ${crypto}:`, result.reason);
+        }
+      });
+
+      if (successCount > 0) {
+        this.renderComparisonCards();
+        this.updateComparisonStatus('connected', `Updated ${successCount}/${this.selectedCryptos.length} cryptocurrencies`);
+      } else {
+        throw new Error('All comparison APIs failed');
+      }
+
+    } catch (error) {
+      console.error('Error fetching comparison data:', error);
+      this.updateComparisonStatus('error', 'Update failed - check connection');
+    } finally {
+      this.isLoading = false;
+      this.setComparisonButtonLoading(false);
+    }
+  }
+
+  async fetchCryptoData(crypto) {
+    // Store current crypto temporarily
+    const originalCrypto = this.currentCrypto;
+    this.currentCrypto = crypto;
+
+    try {
+      // Try Binance API first
+      let priceData = await this.fetchBinanceAPI();
+
+      if (!priceData) {
+        // Fallback to proxied CoinGecko API
+        priceData = await this.fetchProxiedCoinGeckoAPI();
+      }
+
+      if (!priceData) {
+        // Final fallback to Kraken
+        priceData = await this.fetchKrakenAPI();
+      }
+
+      return priceData;
+    } finally {
+      // Restore original crypto
+      this.currentCrypto = originalCrypto;
+    }
+  }
+
+  renderComparisonCards() {
+    if (this.selectedCryptos.length === 0) {
+      this.elements.comparisonCards.innerHTML = '<div class="comparison-empty">Select cryptocurrencies to compare</div>';
+      return;
+    }
+
+    this.elements.comparisonCards.innerHTML = this.selectedCryptos.map(crypto => {
+      const config = this.cryptoConfig[crypto];
+      const data = this.comparisonData[crypto];
+
+      return `
+        <div class="comparison-card" style="--crypto-color: ${config.color}" data-crypto="${crypto}">
+          <div class="comparison-card-header">
+            <span class="comparison-crypto-icon">${config.icon}</span>
+            <span class="comparison-crypto-name">${config.name}</span>
+          </div>
+
+          <div class="comparison-price" id="comparison-price-${crypto}">
+            ${data ? this.formatCurrency(data.price) : 'Loading...'}
+          </div>
+
+          <div class="comparison-change" id="comparison-change-${crypto}">
+            ${data ? this.renderComparisonChange(data.change24h, data.changePercent) : '<span class="comparison-change-value">--</span>'}
+          </div>
+
+          <div class="comparison-stats">
+            <div class="comparison-stat">
+              <div class="comparison-stat-label">24h High</div>
+              <div class="comparison-stat-value" id="comparison-high-${crypto}">
+                ${data ? this.formatCurrency(data.marketData.high24h) : '--'}
+              </div>
+            </div>
+            <div class="comparison-stat">
+              <div class="comparison-stat-label">24h Low</div>
+              <div class="comparison-stat-value" id="comparison-low-${crypto}">
+                ${data ? this.formatCurrency(data.marketData.low24h) : '--'}
+              </div>
+            </div>
+            <div class="comparison-stat">
+              <div class="comparison-stat-label">Market Cap</div>
+              <div class="comparison-stat-value" id="comparison-mcap-${crypto}">
+                ${data ? this.formatLargeNumber(data.marketData.marketCap) : '--'}
+              </div>
+            </div>
+            <div class="comparison-stat">
+              <div class="comparison-stat-label">Volume 24h</div>
+              <div class="comparison-stat-value" id="comparison-vol-${crypto}">
+                ${data ? this.formatLargeNumber(data.marketData.volume24h) : '--'}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  renderComparisonChange(change24h, changePercent) {
+    const formattedChange = this.formatCurrency(Math.abs(change24h));
+    const formattedPercent = Math.abs(changePercent).toFixed(2);
+    const changeClass = change24h >= 0 ? 'positive' : 'negative';
+    const sign = change24h >= 0 ? '+' : '-';
+
+    return `
+      <span class="comparison-change-value ${changeClass}">${sign}$${formattedChange}</span>
+      <span class="comparison-change-percent ${changeClass}">${sign}${formattedPercent}%</span>
+    `;
+  }
+
+  updateComparisonStatus(status, text) {
+    this.elements.comparisonStatusDot.className = `status-dot ${status}`;
+    this.elements.comparisonStatusText.textContent = text;
+  }
+
+  setComparisonButtonLoading(loading) {
+    if (loading) {
+      this.elements.comparisonUpdateBtn.classList.add('loading');
+      this.elements.comparisonUpdateBtn.disabled = true;
+    } else {
+      this.elements.comparisonUpdateBtn.classList.remove('loading');
+      this.elements.comparisonUpdateBtn.disabled = false;
     }
   }
   async registerServiceWorker() {
@@ -520,6 +785,30 @@ class CryptoPriceTracker {
     }
   }
 
+  checkAlertsForCrypto(crypto, currentPrice) {
+    const cryptoAlerts = this.alerts.filter(alertItem => alertItem.crypto === crypto);
+    const triggeredAlerts = [];
+
+    cryptoAlerts.forEach(alertItem => {
+      let shouldTrigger = false;
+
+      if (alertItem.condition === 'above' && currentPrice >= alertItem.price) {
+        shouldTrigger = true;
+      } else if (alertItem.condition === 'below' && currentPrice <= alertItem.price) {
+        shouldTrigger = true;
+      }
+
+      if (shouldTrigger) {
+        triggeredAlerts.push(alertItem);
+      }
+    });
+
+    // If multiple alerts triggered, show them all
+    if (triggeredAlerts.length > 0) {
+      this.triggerMultipleAlerts(triggeredAlerts, currentPrice);
+    }
+  }
+
   triggerAlert(alertItem, currentPrice, notificationIndex = 0) {
     const cryptoConfig = this.cryptoConfig[alertItem.crypto];
     const title = `${cryptoConfig.name} Price Alert`;
@@ -627,7 +916,7 @@ class CryptoPriceTracker {
         <div class="alert-item active" data-alert-id="${alertItem.id}">
           <div class="alert-details">
             <div class="alert-condition">
-              ${this.cryptoConfig[alertItem.crypto].icon} ${alertItem.condition.charAt(0).toUpperCase() + alertItem.condition.slice(1)} $${this.formatCurrency(alertItem.price)}
+              <span class="crypto-icon-${alertItem.crypto}">${this.cryptoConfig[alertItem.crypto].icon}</span> ${alertItem.condition.charAt(0).toUpperCase() + alertItem.condition.slice(1)} $${this.formatCurrency(alertItem.price)}
             </div>
             <div class="alert-crypto">
               ${this.cryptoConfig[alertItem.crypto].name} • Created ${new Date(alertItem.created).toLocaleDateString()}

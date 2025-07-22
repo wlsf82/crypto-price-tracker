@@ -53,12 +53,12 @@ header h1 {
   align-items: center;
   justify-content: center;
   gap: 10px;
+  margin-bottom: 1.5rem;
 }
 
 .bitcoin-icon, .crypto-icon {
   font-size: 3rem;
   color: var(--primary-color);
-  -webkit-text-fill-color: var(--primary-color);
 }
 
 .crypto-selector {
@@ -67,6 +67,51 @@ header h1 {
   gap: 1rem;
   margin-top: 1.5rem;
   flex-wrap: wrap;
+}
+
+.view-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.view-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: calc(var(--border-radius) - 2px);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1;
+  justify-content: center;
+}
+
+.view-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.view-btn.active {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.view-icon {
+  font-size: 1rem;
 }
 
 .crypto-btn {
@@ -202,7 +247,7 @@ main {
 .update-section {
   display: flex;
   justify-content: center;
-  margin-bottom: 1.5rem;
+  margin: 2rem 0 1.5rem 0;
 }
 
 .update-btn {
@@ -234,6 +279,11 @@ main {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+}
+
+.update-btn:disabled:hover {
+  transform: none;
+  box-shadow: var(--shadow);
 }
 
 .update-icon {
@@ -353,6 +403,7 @@ footer a:hover {
 
   header h1 {
     font-size: 2rem;
+    margin-bottom: 1.25rem;
   }
 
   .bitcoin-icon, .crypto-icon {
@@ -392,6 +443,7 @@ footer a:hover {
     font-size: 1.5rem;
     flex-direction: column;
     gap: 5px;
+    margin-bottom: 1rem;
   }
 
   .bitcoin-icon, .crypto-icon {
@@ -551,6 +603,25 @@ footer a:hover {
   color: var(--text-primary);
 }
 
+.alert-condition .crypto-icon-bitcoin,
+.alert-condition .crypto-icon-ethereum,
+.alert-condition .crypto-icon-solana {
+  color: inherit;
+}
+
+/* Override alert-condition color when it contains crypto icons */
+.alert-condition:has(.crypto-icon-bitcoin) {
+  color: var(--bitcoin-orange);
+}
+
+.alert-condition:has(.crypto-icon-ethereum) {
+  color: var(--ethereum-blue);
+}
+
+.alert-condition:has(.crypto-icon-solana) {
+  color: var(--solana-purple);
+}
+
 .alert-crypto {
   font-size: 0.9rem;
   color: var(--text-secondary);
@@ -602,6 +673,364 @@ footer a:hover {
   .alert-input-group {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .alert-input, .add-alert-btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .alert-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .alert-actions {
+    margin-top: 1rem;
+    justify-content: flex-end;
+  }
+}
+
+/* View toggle and comparison styles */
+.hidden {
+  display: none !important;
+}
+
+.single-view {
+  display: block;
+}
+
+.comparison-view {
+  display: block;
+}
+
+.comparison-view .crypto-selector {
+  display: none;
+}
+
+/* Add animations for view transitions */
+.single-view, .comparison-view {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.comparison-controls {
+  background: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+
+.comparison-controls h2 {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: var(--bitcoin-orange);
+  font-size: 1.5rem;
+}
+
+.comparison-currency {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.crypto-checkboxes {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.crypto-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid transparent;
+}
+
+.crypto-checkbox:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--primary-color);
+}
+
+.crypto-checkbox input[type="checkbox"] {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--text-secondary);
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.crypto-checkbox input[type="checkbox"]:checked {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.crypto-checkbox input[type="checkbox"]:checked::before {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* Crypto-specific checkbox styling */
+.crypto-checkbox[data-crypto="bitcoin"] {
+  color: var(--bitcoin-orange);
+}
+
+.crypto-checkbox[data-crypto="bitcoin"]:hover {
+  border-color: var(--bitcoin-orange);
+}
+
+.crypto-checkbox[data-crypto="bitcoin"] input[type="checkbox"]:checked {
+  background: var(--bitcoin-orange);
+  border-color: var(--bitcoin-orange);
+}
+
+.crypto-checkbox[data-crypto="ethereum"] {
+  color: var(--ethereum-blue);
+}
+
+.crypto-checkbox[data-crypto="ethereum"]:hover {
+  border-color: var(--ethereum-blue);
+}
+
+.crypto-checkbox[data-crypto="ethereum"] input[type="checkbox"]:checked {
+  background: var(--ethereum-blue);
+  border-color: var(--ethereum-blue);
+}
+
+.crypto-checkbox[data-crypto="solana"] {
+  color: var(--solana-purple);
+}
+
+.crypto-checkbox[data-crypto="solana"]:hover {
+  border-color: var(--solana-purple);
+}
+
+.crypto-checkbox[data-crypto="solana"] input[type="checkbox"]:checked {
+  background: var(--solana-purple);
+  border-color: var(--solana-purple);
+}
+
+/* Crypto-specific icon styling for alerts */
+.crypto-icon-bitcoin {
+  color: var(--bitcoin-orange);
+}
+
+.crypto-icon-ethereum {
+  color: var(--ethereum-blue);
+}
+
+.crypto-icon-solana {
+  color: var(--solana-purple);
+}
+
+.comparison-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.comparison-card {
+  background: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.comparison-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(135deg, var(--crypto-color, var(--primary-color)), var(--crypto-color, var(--primary-color)));
+  animation: shimmer 3s infinite;
+}
+
+.comparison-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+
+.comparison-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.comparison-crypto-icon {
+  font-size: 2rem;
+  color: var(--crypto-color, var(--primary-color));
+}
+
+.comparison-crypto-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--crypto-color, var(--primary-color));
+}
+
+.comparison-price {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--crypto-color, var(--primary-color));
+  margin-bottom: 0.5rem;
+}
+
+.comparison-change {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.comparison-change-value {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.comparison-change-percent {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.comparison-change-value.positive, .comparison-change-percent.positive {
+  color: var(--green);
+  background: rgba(0, 212, 170, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.comparison-change-value.negative, .comparison-change-percent.negative {
+  color: var(--red);
+  background: rgba(255, 107, 107, 0.1);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.comparison-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.comparison-stat {
+  text-align: center;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.comparison-stat-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.comparison-stat-value {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--crypto-color, var(--primary-color));
+}
+
+.comparison-update-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.comparison-loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.comparison-loading .comparison-price,
+.comparison-loading .comparison-change-value,
+.comparison-loading .comparison-change-percent,
+.comparison-loading .comparison-stat-value {
+  color: var(--text-secondary);
+}
+
+.comparison-empty {
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 3rem;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  border: 2px dashed rgba(255, 255, 255, 0.1);
+  grid-column: 1 / -1;
+}
+
+/* Mobile responsiveness for comparison view */
+@media (max-width: 768px) {
+  .crypto-checkboxes {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .comparison-cards {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .comparison-card {
+    padding: 1rem;
+  }
+
+  .comparison-price {
+    font-size: 1.5rem;
+  }
+
+  .comparison-stats {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .view-toggle {
+    max-width: 250px;
+  }
+
+  .view-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
   }
 
   .alert-input {

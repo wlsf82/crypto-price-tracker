@@ -21,10 +21,18 @@
 <body>
   <div class="container">
     <header>
-      <h1>
-        <span class="crypto-icon" id="cryptoIcon">₿</span>
-        <span id="appTitle">Crypto Price Tracker</span>
-      </h1>
+      <h1>$ Crypto Price Tracker</h1>
+
+      <div class="view-toggle">
+        <button type="button" class="view-btn active" data-view="single">
+          <span class="view-icon">📊</span>
+          Single View
+        </button>
+        <button type="button" class="view-btn" data-view="comparison">
+          <span class="view-icon">📈</span>
+          Compare
+        </button>
+      </div>
 
       <div class="crypto-selector">
         <button type="button" class="crypto-btn active" data-crypto="bitcoin">
@@ -43,75 +51,119 @@
     </header>
 
     <main>
-      <div class="price-card">
-        <div class="price-section">
-          <div class="price" id="price">Loading...</div>
-          <div class="currency">USD</div>
+      <!-- Single View -->
+      <div class="single-view" id="singleView">
+        <div class="price-card">
+          <div class="price-section">
+            <div class="price" id="price">Loading...</div>
+            <div class="currency">USD</div>
+          </div>
+
+          <div class="change-section">
+            <div class="change" id="change">--</div>
+            <div class="change-percent" id="changePercent">--%</div>
+          </div>
+
+          <div class="last-updated">
+            Last updated: <span id="lastUpdated">--</span>
+          </div>
         </div>
 
-        <div class="change-section">
-          <div class="change" id="change">--</div>
-          <div class="change-percent" id="changePercent">--%</div>
+        <div class="update-section">
+          <button type="button" class="update-btn" id="updateBtn">
+            <span class="update-icon">🔄</span>
+            Update Data
+          </button>
         </div>
 
-        <div class="last-updated">
-          Last updated: <span id="lastUpdated">--</span>
+        <div class="status-indicator">
+          <div class="status-dot" id="statusDot"></div>
+          <span id="statusText">Ready</span>
         </div>
+
+        <section>
+          <h2 class="market-stats-title">Market Statistics</h2>
+          <div class="info-cards">
+            <div class="info-card">
+              <h3>24h High</h3>
+              <p id="high24h">--</p>
+            </div>
+            <div class="info-card">
+              <h3>24h Low</h3>
+              <p id="low24h">--</p>
+            </div>
+            <div class="info-card">
+              <h3>Market Cap</h3>
+              <p id="marketCap">--</p>
+            </div>
+            <div class="info-card">
+              <h3>Volume 24h</h3>
+              <p id="volume24h">--</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="alerts-section">
+          <h2 class="alerts-title">Price Alerts</h2>
+          <div class="alert-form">
+            <div class="alert-input-group">
+              <select id="alertCondition" class="alert-input">
+                <option value="above">Above</option>
+                <option value="below">Below</option>
+              </select>
+              <input type="number" id="alertPrice" placeholder="Price in USD" step="0.01" min="0" class="alert-input">
+              <button type="button" id="addAlertBtn" class="add-alert-btn">
+                <span class="alert-icon">🔔</span>
+                Add Alert
+              </button>
+            </div>
+          </div>
+          <div class="alerts-list" id="alertsList">
+            <!-- Active alerts will be displayed here -->
+          </div>
+        </section>
       </div>
 
-      <div class="update-section">
-        <button type="button" class="update-btn" id="updateBtn">
-          <span class="update-icon">🔄</span>
-          Update Data
-        </button>
+      <!-- Comparison View -->
+      <div class="comparison-view hidden" id="comparisonView">
+        <div class="comparison-controls">
+          <h2>Compare Cryptocurrencies</h2>
+          <p class="comparison-currency">All prices in USD</p>
+          <div class="crypto-checkboxes">
+            <label class="crypto-checkbox" data-crypto="bitcoin">
+              <input type="checkbox" data-crypto="bitcoin" checked>
+              <span class="crypto-symbol">₿</span>
+              Bitcoin
+            </label>
+            <label class="crypto-checkbox" data-crypto="ethereum">
+              <input type="checkbox" data-crypto="ethereum" checked>
+              <span class="crypto-symbol">Ξ</span>
+              Ethereum
+            </label>
+            <label class="crypto-checkbox" data-crypto="solana">
+              <input type="checkbox" data-crypto="solana" checked>
+              <span class="crypto-symbol">◎</span>
+              Solana
+            </label>
+          </div>
+        </div>
+
+        <div class="comparison-cards" id="comparisonCards">
+          <!-- Comparison cards will be dynamically generated here -->
+        </div>
+
+        <div class="comparison-update-section">
+          <button type="button" class="update-btn" id="comparisonUpdateBtn">
+            <span class="update-icon">🔄</span>
+            Update Data
+          </button>
+        </div>
+
+        <div class="status-indicator">
+          <div class="status-dot" id="comparisonStatusDot"></div>
+          <span id="comparisonStatusText">Ready</span>
+        </div>
       </div>
-
-      <div class="status-indicator">
-        <div class="status-dot" id="statusDot"></div>
-        <span id="statusText">Ready</span>
-      </div>
-
-      <section>
-        <h2 class="market-stats-title">Market Statistics</h2>
-        <div class="info-cards">
-          <div class="info-card">
-            <h3>24h High</h3>
-            <p id="high24h">--</p>
-          </div>
-          <div class="info-card">
-            <h3>24h Low</h3>
-            <p id="low24h">--</p>
-          </div>
-          <div class="info-card">
-            <h3>Market Cap</h3>
-            <p id="marketCap">--</p>
-          </div>
-          <div class="info-card">
-            <h3>Volume 24h</h3>
-            <p id="volume24h">--</p>
-          </div>
-        </div>
-      </section>
-
-      <section class="alerts-section">
-        <h2 class="alerts-title">Price Alerts</h2>
-        <div class="alert-form">
-          <div class="alert-input-group">
-            <select id="alertCondition" class="alert-input">
-              <option value="above">Above</option>
-              <option value="below">Below</option>
-            </select>
-            <input type="number" id="alertPrice" placeholder="Price in USD" step="0.01" min="0" class="alert-input">
-            <button type="button" id="addAlertBtn" class="add-alert-btn">
-              <span class="alert-icon">🔔</span>
-              Add Alert
-            </button>
-          </div>
-        </div>
-        <div class="alerts-list" id="alertsList">
-          <!-- Active alerts will be displayed here -->
-        </div>
-      </section>
     </main>
 
     <footer>
