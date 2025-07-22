@@ -456,4 +456,150 @@ describe('Crypto Price Tracker', () => {
       cy.contains('#marketCap', 'T').should('be.visible')
     })
   })
+
+  context('Price Alerts', () => {
+    beforeEach(() => {
+      cy.mockAllApisSuccess()
+      cy.visit(url)
+      cy.wait('@binanceAPI')
+    })
+
+    it('should show no price alerts set for Bitcoin', () => {
+      // Verify no alerts are initially set for Bitcoin
+      cy.contains('.alerts-empty', 'No price alerts set').should('be.visible')
+    })
+
+    it('should show no price alerts set for Ethereum', () => {
+      // Go the Ethereum view
+      cy.get('.crypto-selector [data-crypto="ethereum"]').click()
+      // Verify no alerts are initially set for Ethereum
+      cy.contains('.alerts-empty', 'No price alerts set').should('be.visible')
+    })
+
+    it('should show no price alerts set for Solana', () => {
+      // Go the Solana view
+      cy.get('.crypto-selector [data-crypto="solana"]').click()
+      // Verify no alerts are initially set for Solana
+      cy.contains('.alerts-empty', 'No price alerts set').should('be.visible')
+    })
+
+    it('should show invalid price when clicking Add Alert button without specifying a price', () => {
+      // Click Add Alert button without entering a price
+      cy.contains('button', 'Add Alert').click()
+
+      // Verify error message for empty price
+      cy.contains('.alert-notification', 'Please enter a valid price').should('be.visible')
+    })
+
+    it('should show invalid price when price is 0', () => {
+      // Enter 0 as the price
+      cy.get('[placeholder="Price in USD"]').type('0')
+      cy.contains('button', 'Add Alert').click()
+
+      // Verify error message for zero price
+      cy.contains('.alert-notification', 'Please enter a valid price').should('be.visible')
+    })
+
+    it('should show invalid price when price is negative', () => {
+      // Enter negative price
+      cy.get('[placeholder="Price in USD"]').type('-100')
+      cy.contains('button', 'Add Alert').click()
+
+      // Verify error message for negative price
+      cy.contains('.alert-notification', 'Please enter a valid price').should('be.visible')
+    })
+
+    it('should successfully add a valid price alert for Bitcoin', () => {
+      // Grant notification permission before the test
+      cy.window().then((win) => {
+        // Mock the Notification.requestPermission method to automatically grant permission
+        cy.stub(win.Notification, 'requestPermission').resolves('granted')
+
+        // Mock the Notification.permission property
+        Object.defineProperty(win.Notification, 'permission', {
+          writable: true,
+          value: 'granted'
+        })
+      })
+
+      // Enter a valid price alert
+      cy.get('[placeholder="Price in USD"]').type('60000')
+      cy.contains('button', 'Add Alert').click()
+
+      // Verify the alert was added successfully
+      cy.contains('.alert-item', '$60,000.00').should('be.visible')
+      cy.get('.alerts-empty').should('not.exist')
+
+      // Verify success notification
+      cy.contains('.alert-notification', 'Alert added: Bitcoin above $60,000.00')
+        .should('be.visible')
+    })
+
+    it('should display triggered alert when price condition is met after clicking update', () => {
+      // Grant notification permission before the test
+      cy.window().then((win) => {
+        cy.stub(win.Notification, 'requestPermission').resolves('granted')
+        Object.defineProperty(win.Notification, 'permission', {
+          writable: true,
+          value: 'granted'
+        })
+      })
+
+      // Add an alert below current price (should trigger)
+      cy.get('[placeholder="Price in USD"]').type('50000')
+      cy.get('#alertCondition').select('below')
+      cy.contains('button', 'Add Alert').click()
+
+      // Verify alert was added
+      cy.contains('.alert-item', '$50,000.00').should('be.visible')
+
+      // Mock API response with price below the alert threshold
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
+        body: {
+          symbol: 'BTCUSDT',
+          priceChange: '-5000.00',
+          priceChangePercent: '-10.00',
+          lastPrice: '45000.00', // Below the alert threshold
+          highPrice: '52000.00',
+          lowPrice: '45000.00',
+          volume: '25000.00000000',
+          quoteVolume: '1250000000.00000000'
+        }
+      }).as('binanceBelowAlert')
+
+      // Click update to trigger price check
+      cy.get('#updateBtn').click()
+      cy.wait('@binanceBelowAlert')
+
+      // Verify the alert notification appears
+      cy.contains('.alert-notification', 'Bitcoin is now below $50,000.00! Current price: $45,000.00')
+        .should('be.visible')
+    })
+
+    it('should allow removing an alert', () => {
+      // Grant notification permission before the test
+      cy.window().then((win) => {
+        cy.stub(win.Notification, 'requestPermission').resolves('granted')
+        Object.defineProperty(win.Notification, 'permission', {
+          writable: true,
+          value: 'granted'
+        })
+      })
+
+      // Add an alert first
+      cy.get('[placeholder="Price in USD"]').type('55000')
+      cy.contains('button', 'Add Alert').click()
+
+      // Verify alert was added
+      cy.contains('.alert-item', '$55,000.00').should('be.visible')
+      cy.get('.alerts-empty').should('not.exist')
+
+      // Remove the alert
+      cy.get('.remove-alert-btn').click()
+
+      // Verify alert was removed and empty state is shown
+      cy.contains('.alert-item', '$55,000.00').should('not.exist')
+      cy.contains('.alerts-empty', 'No price alerts set').should('be.visible')
+    })
+  })
 })
