@@ -59,7 +59,7 @@ describe('Crypto Price Tracker', () => {
       // Verify market data
       cy.contains('#high24h', '52,000.00').should('be.visible')
       cy.contains('#low24h', '49,500.00').should('be.visible')
-      cy.contains('#marketCap', '$1.01T').should('be.visible') // 51111.10 * 19700000
+      cy.contains('#marketCap', '$1.02T').should('be.visible')
       cy.contains('#volume24h', '$630.79B').should('be.visible')
 
       // Verify status
