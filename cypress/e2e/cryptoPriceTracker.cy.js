@@ -12,26 +12,48 @@ describe('Crypto Price Tracker', () => {
 
   context('Initial page load', () => {
     it('should display the page title and initial loading state', () => {
+      // Mock API to delay response to catch loading state
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
+        fixture: 'binance-api-success.json',
+        delay: 1000
+      }).as('binanceAPIDelayed')
+
+      cy.visit(url)
+
       cy.title().should('eq', 'Crypto Price Tracker')
       cy.contains('h1', 'Crypto Price Tracker').should('be.visible')
       cy.contains('#price', 'Loading...').should('be.visible')
       cy.contains('#change', '--').should('be.visible')
       cy.contains('#changePercent', '--%').should('be.visible')
       cy.contains('#lastUpdated', '--').should('be.visible')
-      // Note: Status changes immediately from 'Ready' due to auto-fetch,
-      // so we just check it's not empty
-      cy.get('#statusText').should('not.be.empty')
+      cy.contains('#statusText', 'Fetching data...').should('be.visible')
+
+      cy.wait('@binanceAPIDelayed')
     })
 
     it('should display all market statistics placeholders', () => {
+      // Mock API to delay response to catch placeholder state
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
+        fixture: 'binance-api-success.json',
+        delay: 1000
+      }).as('binanceAPIDelayed')
+
+      cy.visit(url)
+
       cy.contains('#high24h', '--').should('be.visible')
       cy.contains('#low24h', '--').should('be.visible')
       cy.contains('#marketCap', '--').should('be.visible')
       cy.contains('#volume24h', '--').should('be.visible')
+
+      cy.wait('@binanceAPIDelayed')
     })
 
     it('should have update button enabled', () => {
-      cy.contains('#updateBtn', 'Update Data', { timeout: 10000 })
+      cy.mockAllApisSuccess()
+      cy.visit(url)
+      cy.wait('@binanceAPI')
+
+      cy.contains('#updateBtn', 'Update Data')
         .should('be.visible')
         .and('be.enabled')
     })
@@ -314,7 +336,9 @@ describe('Crypto Price Tracker', () => {
 
   context('Offline scenarios', () => {
     beforeEach(() => {
+      cy.mockAllApisSuccess()
       cy.visit(url)
+      cy.wait('@binanceAPI')
     })
 
     it('should handle offline state', () => {
@@ -333,6 +357,11 @@ describe('Crypto Price Tracker', () => {
         win.dispatchEvent(new Event('offline'))
       })
       cy.contains('#statusText', 'Offline').should('be.visible')
+
+      // Mock API for when coming back online
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
+        fixture: 'binance-api-success.json'
+      }).as('binanceAPIOnline')
 
       // Then come back online
       cy.window().then((win) => {
@@ -355,7 +384,9 @@ describe('Crypto Price Tracker', () => {
 
   context('Accessibility and UI', () => {
     it('should have proper heading structure', () => {
+      cy.mockAllApisSuccess()
       cy.visit(url)
+      cy.wait('@binanceAPI')
 
       cy.contains('h1', 'Crypto Price Tracker').should('be.visible')
 
@@ -364,7 +395,9 @@ describe('Crypto Price Tracker', () => {
     })
 
     it('should have accessible button', () => {
+      cy.mockAllApisSuccess()
       cy.visit(url)
+      cy.wait('@binanceAPI')
 
       cy.get('#updateBtn')
         .should('have.attr', 'type', 'button')
