@@ -602,4 +602,99 @@ describe('Crypto Price Tracker', () => {
       cy.contains('.alerts-empty', 'No price alerts set').should('be.visible')
     })
   })
+
+  context('Compare View', () => {
+    beforeEach(() => {
+      cy.mockAllApisSuccess()
+      cy.visit(url)
+      cy.wait('@binanceAPI')
+
+      // Mock Ethereum API response
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=ETHUSDT', {
+        fixture: 'binance-ethereum-success.json'
+      }).as('ethereumAPI')
+
+      // Mock Solana API response
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=SOLUSDT', {
+        fixture: 'binance-solana-success.json'
+      }).as('solanaAPI')
+
+      // Switch to comparison view
+      cy.get('.view-btn[data-view="comparison"]').click()
+    })
+
+    it('should display all three crypto cards when all checkboxes are checked', () => {
+      // Wait for the comparison data to load
+      cy.wait('@ethereumAPI')
+      cy.wait('@solanaAPI')
+
+      // Verify all checkboxes are checked by default
+      cy.get('input[data-crypto="bitcoin"]').should('be.checked')
+      cy.get('input[data-crypto="ethereum"]').should('be.checked')
+      cy.get('input[data-crypto="solana"]').should('be.checked')
+
+      // Verify all three cards are displayed
+      cy.get('.comparison-card[data-crypto="bitcoin"]').should('be.visible')
+      cy.get('.comparison-card[data-crypto="ethereum"]').should('be.visible')
+      cy.get('.comparison-card[data-crypto="solana"]').should('be.visible')
+
+      // Verify the cards contain the expected crypto names
+      cy.contains('.comparison-card', 'Bitcoin').should('be.visible')
+      cy.contains('.comparison-card', 'Ethereum').should('be.visible')
+      cy.contains('.comparison-card', 'Solana').should('be.visible')
+
+      // Verify the price data is displayed correctly
+      cy.get('#comparison-price-bitcoin').should('contain', '51,111.10')
+      cy.get('#comparison-price-ethereum').should('contain', '3,300.50')
+      cy.get('#comparison-price-solana').should('contain', '238.75')
+
+      // Verify change indicators
+      cy.get('#comparison-change-bitcoin').should('contain', '+$1,234.56')
+      cy.get('#comparison-change-ethereum').should('contain', '+$123.45')
+      cy.get('#comparison-change-solana').should('contain', '-$5.25')
+    })
+
+    it('should display only two cards when one checkbox is unchecked', () => {
+      // Wait for initial data load
+      cy.wait('@ethereumAPI')
+      cy.wait('@solanaAPI')
+
+      // Uncheck the Solana checkbox
+      cy.get('input[data-crypto="solana"]').uncheck()
+
+      // Verify only Bitcoin and Ethereum cards are displayed
+      cy.get('.comparison-card[data-crypto="bitcoin"]').should('be.visible')
+      cy.get('.comparison-card[data-crypto="ethereum"]').should('be.visible')
+      cy.get('.comparison-card[data-crypto="solana"]').should('not.exist')
+
+      // Verify the remaining cards contain the expected crypto names and data
+      cy.contains('.comparison-card', 'Bitcoin').should('be.visible')
+      cy.contains('.comparison-card', 'Ethereum').should('be.visible')
+      cy.contains('.comparison-card', 'Solana').should('not.exist')
+
+      // Verify price data for remaining cards
+      cy.get('#comparison-price-bitcoin').should('contain', '51,111.10')
+      cy.get('#comparison-price-ethereum').should('contain', '3,300.50')
+    })
+
+    it('should show empty state when all checkboxes are unchecked', () => {
+      // Uncheck all checkboxes
+      cy.get('input[data-crypto="bitcoin"]').uncheck()
+      cy.get('input[data-crypto="ethereum"]').uncheck()
+      cy.get('input[data-crypto="solana"]').uncheck()
+
+      // Verify empty state message is displayed
+      cy.contains('.comparison-empty', 'Select cryptocurrencies to compare').should('be.visible')
+
+      // Verify no comparison cards are displayed
+      cy.get('.comparison-card').should('not.exist')
+
+      // Verify Update Data button is disabled
+      cy.get('#comparisonUpdateBtn').should('be.disabled')
+
+      // Verify status shows error message
+      cy.contains('#comparisonStatusText', 'Select at least one cryptocurrency').should('be.visible')
+      cy.get('#comparisonStatusDot').should('have.class', 'error')
+    })
+  })
 })
