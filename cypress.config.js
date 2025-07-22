@@ -4,7 +4,7 @@ module.exports = defineConfig({
   projectId: "7x6pkm",
   e2e: {},
   retries: {
-    runMode: 2,
+    runMode: 4,
     openMode: 0,
   },
 });
