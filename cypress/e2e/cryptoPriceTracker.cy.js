@@ -555,16 +555,7 @@ describe('Crypto Price Tracker', () => {
 
       // Mock API response with price below the alert threshold
       cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
-        body: {
-          symbol: 'BTCUSDT',
-          priceChange: '-5000.00',
-          priceChangePercent: '-10.00',
-          lastPrice: '45000.00', // Below the alert threshold
-          highPrice: '52000.00',
-          lowPrice: '45000.00',
-          volume: '25000.00000000',
-          quoteVolume: '1250000000.00000000'
-        }
+        fixture: 'binance-below-alert.json'
       }).as('binanceBelowAlert')
 
       // Click update to trigger price check
