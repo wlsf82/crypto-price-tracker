@@ -960,12 +960,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // Handle online/offline events
   window.addEventListener('offline', () => {
     window.tracker.updateStatus('error', 'Offline');
+    window.tracker.updateComparisonStatus('error', 'Offline');
     window.tracker.stopAutoFetch(); // Stop auto-fetching when offline
   });
 
   window.addEventListener('online', () => {
     window.tracker.updateStatus('connected', 'Back online');
-    window.tracker.fetchCryptoPrice(); // Fetch immediately when back online
+    window.tracker.updateComparisonStatus('connected', 'Back online');
+
+    // Fetch data for current view when back online
+    if (window.tracker.currentView === 'comparison') {
+      window.tracker.fetchComparisonData();
+    } else {
+      window.tracker.fetchCryptoPrice();
+    }
+
     window.tracker.startAutoFetch(); // Restart auto-fetching
   });
 
