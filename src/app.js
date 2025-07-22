@@ -427,7 +427,7 @@ class CryptoPriceTracker {
     const sign = change24h >= 0 ? '+' : '-';
 
     return `
-      <span class="comparison-change-value ${changeClass}">${sign}$${formattedChange}</span>
+      <span class="comparison-change-value ${changeClass}">${sign}${formattedChange}</span>
       <span class="comparison-change-percent ${changeClass}">${sign}${formattedPercent}%</span>
     `;
   }
@@ -646,7 +646,7 @@ class CryptoPriceTracker {
 
     // Update content
     const sign = change24h >= 0 ? '+' : '-';
-    this.elements.change.textContent = `${sign}$${formattedChange}`;
+    this.elements.change.textContent = `${sign}${formattedChange}`;
     this.elements.changePercent.textContent = `${sign}${formattedPercent}%`;
   }
 
@@ -684,7 +684,7 @@ class CryptoPriceTracker {
   }
 
   formatCurrency(amount) {
-    return new Intl.NumberFormat('en-US', {
+    return '$' + new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(amount);
@@ -698,7 +698,7 @@ class CryptoPriceTracker {
     } else if (num >= 1e6) {
       return `$${(num / 1e6).toFixed(2)}M`;
     } else {
-      return `$${this.formatCurrency(num)}`;
+      return this.formatCurrency(num);
     }
   }
 
@@ -752,7 +752,7 @@ class CryptoPriceTracker {
     // Show confirmation with permission status
     const permissionNote = this.notificationPermission === 'granted' ?
       '' : ' (Enable notifications in your browser to receive alerts)';
-    this.showAlertConfirmation(`Alert added: ${this.cryptoConfig[this.currentCrypto].name} ${condition} $${this.formatCurrency(priceValue)}${permissionNote}`);
+    this.showAlertConfirmation(`Alert added: ${this.cryptoConfig[this.currentCrypto].name} ${condition} ${this.formatCurrency(priceValue)}${permissionNote}`);
   }
 
   removeAlert(alertId) {
@@ -812,7 +812,7 @@ class CryptoPriceTracker {
   triggerAlert(alertItem, currentPrice, notificationIndex = 0) {
     const cryptoConfig = this.cryptoConfig[alertItem.crypto];
     const title = `${cryptoConfig.name} Price Alert`;
-    const body = `${cryptoConfig.name} is now ${alertItem.condition} $${this.formatCurrency(alertItem.price)}! Current price: $${this.formatCurrency(currentPrice)}`;
+    const body = `${cryptoConfig.name} is now ${alertItem.condition} ${this.formatCurrency(alertItem.price)}! Current price: ${this.formatCurrency(currentPrice)}`;
 
     // Show browser notification if permission granted
     if (this.notificationPermission === 'granted') {
@@ -916,7 +916,7 @@ class CryptoPriceTracker {
         <div class="alert-item active" data-alert-id="${alertItem.id}">
           <div class="alert-details">
             <div class="alert-condition">
-              <span class="crypto-icon-${alertItem.crypto}">${this.cryptoConfig[alertItem.crypto].icon}</span> ${alertItem.condition.charAt(0).toUpperCase() + alertItem.condition.slice(1)} $${this.formatCurrency(alertItem.price)}
+              <span class="crypto-icon-${alertItem.crypto}">${this.cryptoConfig[alertItem.crypto].icon}</span> ${alertItem.condition.charAt(0).toUpperCase() + alertItem.condition.slice(1)} ${this.formatCurrency(alertItem.price)}
             </div>
             <div class="alert-crypto">
               ${this.cryptoConfig[alertItem.crypto].name} • Created ${new Date(alertItem.created).toLocaleDateString()}
