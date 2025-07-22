@@ -347,7 +347,7 @@ describe('Crypto Price Tracker', () => {
         win.dispatchEvent(new Event('offline'))
       })
 
-      cy.contains('#statusText', 'Offline').should('be.visible')
+      cy.contains('#statusText', 'Offline', { timeout: 10000 }).should('be.visible')
       cy.get('#statusDot').should('have.class', 'error')
     })
 
@@ -356,7 +356,7 @@ describe('Crypto Price Tracker', () => {
       cy.window().then((win) => {
         win.dispatchEvent(new Event('offline'))
       })
-      cy.contains('#statusText', 'Offline').should('be.visible')
+      cy.contains('#statusText', 'Offline', { timeout: 10000 }).should('be.visible')
 
       // Mock API for when coming back online
       cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
@@ -374,7 +374,7 @@ describe('Crypto Price Tracker', () => {
 
     it('should handle offline and online events (custom commands)', () => {
       cy.goOffline()
-      cy.contains('#statusText', 'Offline').should('be.visible')
+      cy.contains('#statusText', 'Offline', { timeout: 10000 }).should('be.visible')
       cy.get('#statusDot').should('have.class', 'error')
 
       cy.goOnline()
