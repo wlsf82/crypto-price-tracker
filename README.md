@@ -1,6 +1,6 @@
 # Cryptocurrency Price Tracker PWA
 
-[![CI/CD](https://github.com/wlsf82/bitcoin-price/actions/workflows/cicd.yml/badge.svg)](https://github.com/wlsf82/bitcoin-price/actions)
+[![CI/CD](https://github.com/wlsf82/bitcoin-price/actions/workflows/cicd.yml/badge.svg)](https://github.com/wlsf82/bitcoin-price/actions) [![crypto-price-tracker](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/7x6pkm&style=flat&logo=cypress)](https://cloud.cypress.io/projects/7x6pkm/runs)
 
 A Progressive Web App that tracks cryptocurrency prices for Bitcoin (BTC), Ethereum (ETH), and Solana (SOL) using multiple APIs with automatic fallback: Binance, CoinGecko, or Kraken.
 
