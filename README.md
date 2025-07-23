@@ -69,6 +69,8 @@ The app features a dedicated comparison mode that allows users to:
 
 ## Deployment
 
+Access the deployed app via the following URL: <https://price-bitcoin.s3.eu-central-1.amazonaws.com/index.html>.
+
 ### Local Development
 
 1. Start a local server (Python, Node.js, or PHP)
