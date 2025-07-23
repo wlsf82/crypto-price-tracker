@@ -144,9 +144,9 @@ bitcoin-price/
 │   ├── favicon.svg                       # App favicon
 │   └── icons/                            # App icons (PNG format)
 │       ├── icon-144x144.png
-│       └── icon-152x152.png
-|       └── icon-180x180.png
-|       └── icon-192x192.png
+│       ├── icon-152x152.png
+│       ├── icon-180x180.png
+│       ├── icon-192x192.png
 |       └── icon-512x512.png
 ├── cypress/                              # Cypress E2E testing framework
 │   ├── e2e/                              # End-to-end test files
