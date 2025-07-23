@@ -161,7 +161,7 @@ bitcoin-price/
 ├── cypress.config.js                     # Cypress configuration
 ├── package.json                          # Node.js dependencies and scripts
 ├── package-lock.json                     # Lockfile for npm dependencies
-├── generate-icons.html                   # Icon generation utility
+├── generate-png-icons.html               # Icon generation utility
 ├── LICENSE                               # MIT License
 └── README.md                             # Project documentation
 ```

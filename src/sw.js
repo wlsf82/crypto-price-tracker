@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bitcoin-tracker-v1';
+const CACHE_NAME = 'bitcoin-tracker-v2';
 const urlsToCache = [
   './',
   './index.html',
@@ -6,8 +6,11 @@ const urlsToCache = [
   './app.js',
   './manifest.json',
   './favicon.svg',
-  './icons/icon-192x192.svg',
-  './icons/icon-512x512.svg'
+  './icons/icon-144x144.png',
+  './icons/icon-152x152.png',
+  './icons/icon-180x180.png',
+  './icons/icon-192x192.png',
+  './icons/icon-512x512.png'
 ];
 
 // Install Service Worker
@@ -77,8 +80,8 @@ self.addEventListener('push', (event) => {
   const title = data.title || 'Price Alert';
   const options = {
     body: data.body || 'Your price alert has been triggered!',
-    icon: './icons/icon-192x192.svg',
-    badge: './icons/icon-192x192.svg',
+    icon: './icons/icon-192x192.png',
+    badge: './icons/icon-192x192.png',
     tag: 'price-alert',
     requireInteraction: true,
     actions: [
