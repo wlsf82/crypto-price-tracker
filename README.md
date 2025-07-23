@@ -101,7 +101,7 @@ This app uses multiple reliable APIs with an automatic fallback system for all s
   - Solana: `solana`
 - **Fallback**: [Kraken API](https://api.kraken.com/0/public/Ticker) - Reliable exchange data
   - Bitcoin: `XBTUSD`
-  - Ethereum: `ETHUSD`
+  - Ethereum: `XETHZUSD`
   - Solana: `SOLUSD`
 
 ### API Features
