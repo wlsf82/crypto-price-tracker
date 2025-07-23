@@ -73,8 +73,8 @@ Access the deployed app via the following URL: <https://price-bitcoin.s3.eu-cent
 
 ### Local Development
 
-1. Start a local server (Python, Node.js, or PHP)
-2. Open `http://localhost:8000`
+1. Start a local server (`npm start`)
+2. Open `http://localhost:8000/src/`
 
 ### AWS S3 Static Hosting
 
