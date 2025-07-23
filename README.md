@@ -140,16 +140,22 @@ bitcoin-price/
 │   ├── sw.js                             # Service Worker for PWA functionality
 │   ├── manifest.json                     # PWA manifest file
 │   ├── favicon.svg                       # App favicon
-│   └── icons/                            # App icons (SVG format)
-│       ├── icon-192x192.svg
-│       └── icon-512x512.svg
+│   └── icons/                            # App icons (PNG format)
+│       ├── icon-144x144.png
+│       └── icon-152x152.png
+|       └── icon-180x180.png
+|       └── icon-192x192.png
+|       └── icon-512x512.png
 ├── cypress/                              # Cypress E2E testing framework
 │   ├── e2e/                              # End-to-end test files
 │   │   └── btcPriceTracker.cy.js
 │   ├── fixtures/                         # Test data fixtures
 │   │   ├── binance-api-error.json
 │   │   ├── binance-api-success.json
+│   │   ├── binance-below-alert.json
+│   │   ├── binance-ethereum-success.json
 │   │   ├── binance-negative-change.json
+│   │   ├── binance-solana-success.json
 │   │   ├── binance-zero-values.json
 │   │   ├── coingecko-proxy-error.json
 │   │   ├── coingecko-proxy-success.json
@@ -173,8 +179,11 @@ bitcoin-price/
 The app uses SVG icons for better scalability and smaller file sizes:
 
 - `favicon.svg` - Browser favicon
-- `icons/icon-192x192.svg` - PWA icon (192x192)
-- `icons/icon-512x512.svg` - PWA icon (512x512)
+- `icons/icon-144x144.png` - PWA icon (144x144)
+- `icons/icon-152x152.png` - PWA icon (152x152)
+- `icons/icon-180x180.png` - PWA icon (180x180)
+- `icons/icon-192x192.png` - PWA icon (192x192)
+- `icons/icon-512x512.png` - PWA icon (512x512)
 
 ### Styling
 
