@@ -96,6 +96,9 @@ This app uses multiple reliable APIs with an automatic fallback system for all s
   - Ethereum: `ETHUSDT`
   - Solana: `SOLUSDT`
 - **Secondary**: [CoinGecko API](https://coingecko.com/) - Comprehensive market data via CORS proxy (AllOrigins)
+  - Bitcoint: `bitcoin`
+  - Ethereum: `ethereum`
+  - Solana: `solana`
 - **Fallback**: [Kraken API](https://api.kraken.com/0/public/Ticker) - Reliable exchange data
   - Bitcoin: `XBTUSD`
   - Ethereum: `ETHUSD`
