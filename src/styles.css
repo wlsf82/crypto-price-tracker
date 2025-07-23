@@ -9,6 +9,7 @@
   --text-secondary: #b0b0b0;
   --green: #00d4aa;
   --red: #ff6b6b;
+  --yellow-warning: #f4b942;
   --border-radius: 12px;
   --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   --gradient: linear-gradient(135deg, var(--primary-color), var(--primary-color));

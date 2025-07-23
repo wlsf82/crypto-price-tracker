@@ -820,7 +820,7 @@ class CryptoPriceTracker {
     }
 
     // Also show an in-app alert with calculated position
-    this.showAlertConfirmation(`🔔 ${body}`, 'alert', notificationIndex);
+    this.showAlertConfirmation(`🔔 ${body}`, 'warning', notificationIndex);
   }
 
   triggerMultipleAlerts(triggeredAlerts, currentPrice) {
@@ -861,12 +861,25 @@ class CryptoPriceTracker {
     const notificationHeight = 90; // Increased height to prevent overlap
     const topOffset = 20 + (notificationIndex * notificationHeight);
 
+    // Set background color and text color based on type
+    let backgroundColor, textColor;
+    if (type === 'alert') {
+      backgroundColor = '#ff6b6b'; // Red for validation errors
+      textColor = '#1a1a1a'; // Dark text for better accessibility on red background
+    } else if (type === 'warning') {
+      backgroundColor = '#f4b942'; // Yellow for price alerts
+      textColor = '#1a1a1a'; // Dark text for better accessibility on yellow background
+    } else {
+      backgroundColor = '#00d4aa'; // Green for success
+      textColor = '#1a1a1a'; // Dark text for better accessibility on green background
+    }
+
     notification.style.cssText = `
       position: fixed;
       top: ${topOffset}px;
       right: 20px;
-      background: ${type === 'alert' ? '#ff6b6b' : '#00d4aa'};
-      color: white;
+      background: ${backgroundColor};
+      color: ${textColor};
       padding: 1rem 1.5rem;
       border-radius: 8px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
