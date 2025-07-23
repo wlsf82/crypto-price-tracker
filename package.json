@@ -9,7 +9,6 @@
     "serve": "python3 -m http.server 8000",
     "test": "cypress run --record false",
     "test:prod": "cypress run --env environment=prod --record false",
-    "test:prod:cloud": "cypress run --record --tag 'prod' --env environment=prod",
     "cy:open": "cypress open",
     "cy:open:prod": "cypress open --env environment=prod"
   },
