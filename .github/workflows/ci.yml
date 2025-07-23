@@ -1,4 +1,4 @@
-name: End-to-end tests
+name: CI
 on: [pull_request, workflow_dispatch]
 jobs:
   cypress-run:
