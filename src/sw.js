@@ -1,6 +1,5 @@
 const CACHE_NAME = 'bitcoin-tracker-v2';
 const urlsToCache = [
-  './',
   './index.html',
   './styles.css',
   './app.js',
