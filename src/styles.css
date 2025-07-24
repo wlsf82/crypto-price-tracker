@@ -664,8 +664,9 @@ select.alert-input:focus {
   border: none;
   border-radius: 6px;
   padding: 0.5rem 1rem;
-  color: white;
+  color: black;
   font-size: 0.9rem;
+  font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
