@@ -660,23 +660,24 @@ select.alert-input:focus {
 }
 
 .remove-alert-btn {
-  background: var(--red);
+  background: linear-gradient(135deg, var(--red), #e55555);
   border: none;
   border-radius: 6px;
   padding: 0.5rem 1rem;
-  color: black;
+  color: white;
   font-size: 0.9rem;
-  font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  box-shadow: var(--shadow);
 }
 
 .remove-alert-btn:hover {
-  background: #e55555;
+  background: linear-gradient(135deg, #e55555, #d44444);
   transform: translateY(-1px);
+  box-shadow: 0 6px 25px rgba(255, 107, 107, 0.4);
 }
 
 .alerts-empty {
