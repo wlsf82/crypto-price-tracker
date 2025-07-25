@@ -1,10 +1,10 @@
-# Cryptocurrency Price Tracker PWA
+# 📊 Cryptocurrency Price Tracker PWA
 
 [![CI/CD](https://github.com/wlsf82/crypto-price-tracker/actions/workflows/cicd.yml/badge.svg)](https://github.com/wlsf82/crypto-price-tracker/actions) [![crypto-price-tracker](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/7x6pkm&style=flat&logo=cypress)](https://cloud.cypress.io/projects/7x6pkm/runs)
 
 A Progressive Web App that tracks cryptocurrency prices for Bitcoin (BTC), Ethereum (ETH), and Solana (SOL) using multiple APIs with automatic fallback: Binance, CoinGecko, or Kraken.
 
-## Features
+## ✨ Features
 
 - ✅ Multi-cryptocurrency support: Bitcoin (BTC), Ethereum (ETH), and Solana (SOL)
 - ✅ Cryptocurrency comparison view: Side-by-side comparison of multiple cryptocurrencies
@@ -22,7 +22,7 @@ A Progressive Web App that tracks cryptocurrency prices for Bitcoin (BTC), Ether
 - ✅ Visual price change animations
 - ✅ Connection status indicator
 
-### Automatic Data Updates
+### 🔄 Automatic Data Updates
 
 The app fetches data automatically and on-demand:
 
@@ -34,7 +34,7 @@ The app fetches data automatically and on-demand:
 
 The automatic updates ensure users always have the latest price information without manual intervention.
 
-### Price Alerts
+### 🔔 Price Alerts
 
 Users can set custom price alerts for any supported cryptocurrency:
 
@@ -44,7 +44,7 @@ Users can set custom price alerts for any supported cryptocurrency:
 - **Multiple Alerts**: Set multiple alerts per cryptocurrency with proper notification stacking
 - **User Control**: Alerts trigger every time conditions are met until manually removed
 
-### Comparison View
+### 📈 Comparison View
 
 The app features a dedicated comparison mode that allows users to:
 
@@ -59,7 +59,7 @@ The app features a dedicated comparison mode that allows users to:
 - **Responsive layout**: Comparison cards automatically adjust to screen size for optimal viewing on all devices
 - **Visual consistency**: Maintains the same design language and animations as the single view
 
-#### How to Use Comparison View
+#### 💡 How to Use Comparison View
 
 1. Click the "Compare" button in the view toggle at the top of the app
 2. Select which cryptocurrencies you want to compare using the checkboxes
@@ -67,16 +67,16 @@ The app features a dedicated comparison mode that allows users to:
 4. Use the "Update Data" button to refresh all comparison data simultaneously
 5. Switch back to "Single View" to focus on one cryptocurrency at a time
 
-## Deployment
+## 🚀 Deployment
 
 Access the deployed app via the following URL: <https://price-bitcoin.s3.eu-central-1.amazonaws.com/index.html>.
 
-### Local Development
+### 💻 Local Development
 
 1. Start a local server (`npm start`)
 2. Open `http://localhost:8000/src/`
 
-### AWS S3 Static Hosting
+### ☁️ AWS S3 Static Hosting
 
 The app is optimized for static hosting with CORS-friendly APIs.
 
@@ -87,7 +87,7 @@ Quick steps:
 3. Enable static website hosting
 4. Access via the S3 website endpoint
 
-## Data Sources
+## 📡 Data Sources
 
 This app uses multiple reliable APIs with an automatic fallback system for all supported cryptocurrencies:
 
@@ -104,7 +104,7 @@ This app uses multiple reliable APIs with an automatic fallback system for all s
   - Ethereum: `XETHZUSD`
   - Solana: `SOLUSD`
 
-### API Features
+### 🛠️ API Features
 
 - Multi-cryptocurrency price tracking (Bitcoin, Ethereum, Solana) in USD
 - 24-hour price changes and percentage for each cryptocurrency
@@ -113,7 +113,7 @@ This app uses multiple reliable APIs with an automatic fallback system for all s
 - Automatic fallback system for maximum reliability
 - Manual data refresh on user request
 
-## PWA Features
+## 📱 PWA Features
 
 - **Offline Support**: The app works offline using cached data
 - **App-like Experience**: Can be installed on mobile and desktop
@@ -121,7 +121,7 @@ This app uses multiple reliable APIs with an automatic fallback system for all s
 - **Responsive Design**: Works on all screen sizes
 - **Push Notifications**: Browser notifications for price alerts (when permission granted)
 
-## Technical Details
+## ⚙️ Technical Details
 
 - **Supported Cryptocurrencies**: Bitcoin (BTC), Ethereum (ETH), Solana (SOL)
 - **View Modes**: Single cryptocurrency view and multi-cryptocurrency comparison view
@@ -134,7 +134,7 @@ This app uses multiple reliable APIs with an automatic fallback system for all s
 - **Caching Strategy**: Cache first for static resources, network first for API calls
 - **Browser Support**: Modern browsers with Service Worker support
 
-## File Structure
+## 📁 File Structure
 
 ```text
 bitcoin-price/
@@ -177,9 +177,9 @@ bitcoin-price/
 └── README.md                             # Project documentation
 ```
 
-## Customization
+## 🎨 Customization
 
-### Icon Files
+### 🖼️ Icon Files
 
 The app uses SVG icons for better scalability and smaller file sizes:
 
@@ -190,7 +190,7 @@ The app uses SVG icons for better scalability and smaller file sizes:
 - `icons/icon-192x192.png` - PWA icon (192x192)
 - `icons/icon-512x512.png` - PWA icon (512x512)
 
-### Styling
+### 🎭 Styling
 
 Modify the CSS custom properties in `styles.css` to change colors and themes:
 
@@ -203,13 +203,13 @@ Modify the CSS custom properties in `styles.css` to change colors and themes:
 }
 ```
 
-## Browser Compatibility
+## 🌐 Browser Compatibility
 
 - Chrome 40+
 - Firefox 44+
 - Safari 11.1+
 - Edge 17+
 
-## License
+## 📄 License
 
 This project is open source and available under the MIT License.
