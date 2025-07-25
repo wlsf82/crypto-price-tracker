@@ -802,6 +802,14 @@ select.alert-input:focus {
   border: 2px solid transparent;
 }
 
+.crypto-checkbox .crypto-name-short {
+  display: none;
+}
+
+.crypto-checkbox .crypto-name-full {
+  display: inline;
+}
+
 .crypto-checkbox:hover {
   background: rgba(255, 255, 255, 0.1);
   border-color: var(--primary-color);
@@ -1037,9 +1045,22 @@ select.alert-input:focus {
 /* Mobile responsiveness for comparison view */
 @media (max-width: 768px) {
   .crypto-checkboxes {
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row;
+    justify-content: center;
     gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .crypto-checkbox {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .crypto-checkbox .crypto-name-full {
+    display: none;
+  }
+
+  .crypto-checkbox .crypto-name-short {
+    display: inline;
   }
 
   .comparison-cards {
