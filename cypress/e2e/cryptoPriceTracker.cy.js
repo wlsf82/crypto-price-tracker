@@ -737,4 +737,82 @@ describe('Crypto Price Tracker', () => {
       cy.get('#comparisonStatusDot').should('have.class', 'error')
     })
   })
+
+  context('Mobile viewport', () => {
+    beforeEach(() => {
+      // Set mobile viewport
+      cy.viewport(375, 667) // iPhone SE dimensions
+      cy.mockAllApisSuccess()
+      cy.visit(url)
+      cy.wait('@binanceAPI')
+    })
+
+    it('should display abbreviated crypto button texts in single view on mobile', () => {
+      // Verify that the full names are hidden on mobile
+      cy.get('.crypto-btn .crypto-name-full').should('not.be.visible')
+
+      // Verify that the abbreviated names are visible on mobile
+      cy.get('.crypto-btn .crypto-name-short').should('be.visible')
+
+      // Check specific button texts
+      cy.contains('.crypto-btn[data-crypto="bitcoin"] .crypto-name-short', 'BTC')
+        .should('be.visible')
+      cy.contains('.crypto-btn[data-crypto="ethereum"] .crypto-name-short', 'ETH')
+        .should('be.visible')
+      cy.contains('.crypto-btn[data-crypto="solana"] .crypto-name-short', 'SOL')
+        .should('be.visible')
+
+      // Verify symbols are still visible
+      cy.contains('.crypto-btn[data-crypto="bitcoin"] .crypto-symbol', '₿')
+        .should('be.visible')
+      cy.contains('.crypto-btn[data-crypto="ethereum"] .crypto-symbol', 'Ξ')
+        .should('be.visible')
+      cy.contains('.crypto-btn[data-crypto="solana"] .crypto-symbol', '◎')
+        .should('be.visible')
+
+      // Verify buttons are displayed side by side (row layout)
+      cy.get('.crypto-btn').should('have.css', 'flex-direction', 'row')
+    })
+
+    it('should display abbreviated crypto checkbox texts in comparison view on mobile', () => {
+      // Mock APIs for comparison view
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=ETHUSDT', {
+        fixture: 'binance-ethereum-success.json'
+      }).as('ethereumAPI')
+
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=SOLUSDT', {
+        fixture: 'binance-solana-success.json'
+      }).as('solanaAPI')
+
+      // Switch to comparison view
+      cy.get('.view-btn[data-view="comparison"]').click()
+      cy.wait('@ethereumAPI')
+      cy.wait('@solanaAPI')
+
+      // Verify that the full names are hidden on mobile
+      cy.get('.crypto-checkbox .crypto-name-full').should('not.be.visible')
+
+      // Verify that the abbreviated names are visible on mobile
+      cy.get('.crypto-checkbox .crypto-name-short').should('be.visible')
+
+      // Check specific checkbox texts
+      cy.contains('.crypto-checkbox[data-crypto="bitcoin"] .crypto-name-short', 'BTC')
+        .should('be.visible')
+      cy.contains('.crypto-checkbox[data-crypto="ethereum"] .crypto-name-short', 'ETH')
+        .should('be.visible')
+      cy.contains('.crypto-checkbox[data-crypto="solana"] .crypto-name-short', 'SOL')
+        .should('be.visible')
+
+      // Verify symbols are still visible
+      cy.contains('.crypto-checkbox[data-crypto="bitcoin"] .crypto-symbol', '₿')
+        .should('be.visible')
+      cy.contains('.crypto-checkbox[data-crypto="ethereum"] .crypto-symbol', 'Ξ')
+        .should('be.visible')
+      cy.contains('.crypto-checkbox[data-crypto="solana"] .crypto-symbol', '◎')
+        .should('be.visible')
+
+      // Verify checkboxes are displayed side by side (row layout)
+      cy.get('.crypto-checkboxes').should('have.css', 'flex-direction', 'row')
+    })
+  })
 })
