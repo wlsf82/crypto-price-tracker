@@ -164,6 +164,14 @@ header h1 {
   font-weight: bold;
 }
 
+.crypto-btn .crypto-name-short {
+  display: none;
+}
+
+.crypto-btn .crypto-name-full {
+  display: inline;
+}
+
 .crypto-btn.active .crypto-symbol {
   color: white;
 }
@@ -472,8 +480,16 @@ footer a:hover {
   .crypto-btn {
     padding: 0.5rem 0.8rem;
     font-size: 0.85rem;
-    flex-direction: column;
-    gap: 0.25rem;
+    flex-direction: row;
+    gap: 0.4rem;
+  }
+
+  .crypto-btn .crypto-name-full {
+    display: none;
+  }
+
+  .crypto-btn .crypto-name-short {
+    display: inline;
   }
 
   .crypto-btn .crypto-symbol {
