@@ -153,7 +153,7 @@ bitcoin-price/
 |       └── icon-512x512.png
 ├── cypress/                              # Cypress E2E testing framework
 │   ├── e2e/                              # End-to-end test files
-│   │   └── btcPriceTracker.cy.js
+│   │   └── cryptoPriceTracker.cy.js
 │   ├── fixtures/                         # Test data fixtures
 │   │   ├── binance-api-error.json
 │   │   ├── binance-api-success.json
