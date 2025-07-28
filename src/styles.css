@@ -1127,12 +1127,13 @@ select.alert-input:focus {
   }
 
   .view-toggle {
-    max-width: 250px;
+    max-width: 280px;
   }
 
   .view-btn {
     padding: 0.5rem 0.75rem;
     font-size: 0.8rem;
+    white-space: nowrap;
   }
 
   .alert-input {
