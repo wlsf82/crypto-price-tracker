@@ -893,7 +893,14 @@ class CryptoPriceTracker {
       line-height: 1.4;
     `;
 
-    document.body.appendChild(notification);
+    // Get the notifications container instead of appending to body
+    const notificationsContainer = document.getElementById('notifications-container');
+    if (notificationsContainer) {
+      notificationsContainer.appendChild(notification);
+    } else {
+      // Fallback to body if container doesn't exist
+      document.body.appendChild(notification);
+    }
 
     setTimeout(() => {
       notification.style.animation = 'slideOut 0.3s ease';

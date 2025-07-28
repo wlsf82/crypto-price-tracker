@@ -1155,6 +1155,19 @@ select.alert-input:focus {
   }
 }
 
+/* Notifications container for accessibility compliance */
+#notifications-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+  pointer-events: none; /* Allow clicks to pass through the container */
+}
+
+#notifications-container .alert-notification {
+  pointer-events: auto; /* But allow interaction with individual notifications */
+}
+
 /* Alert notification animations */
 @keyframes slideIn {
   from {
