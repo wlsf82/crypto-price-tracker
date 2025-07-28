@@ -1,0 +1,22 @@
+name: cron
+
+on:
+  schedule:
+    # runs four times a day (six a.m, noon, six p.m, and midnight - UTC)
+    - cron: "0 12,18,00,06 * * *"
+  workflow_dispatch:
+
+jobs:
+  cron-tests-in-prod:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run Cypress tests in production 🧪
+        uses: cypress-io/github-action@v6
+        with:
+          record: true
+          tag: prod-cron
+          env: environment=prod
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
