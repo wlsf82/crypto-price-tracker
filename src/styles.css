@@ -692,7 +692,7 @@ select.alert-input:focus {
   background: linear-gradient(135deg, var(--red), #e55555);
   border: none;
   border-radius: 6px;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1rem 0.5rem 0.875rem;
   color: white;
   font-size: 0.9rem;
   cursor: pointer;
