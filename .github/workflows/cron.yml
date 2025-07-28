@@ -2,8 +2,8 @@ name: cron
 
 on:
   schedule:
-    # runs four times a day (six a.m, noon, six p.m, and midnight - UTC)
-    - cron: "0 12,18,00,06 * * *"
+    # runs once a day (at midnight - UTC)
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 jobs:
