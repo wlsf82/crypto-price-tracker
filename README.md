@@ -55,7 +55,7 @@ The app features a dedicated comparison mode that allows users to:
   - 24-hour price change (amount and percentage)
   - Market statistics (24h high/low, market cap, volume)
   - Cryptocurrency-specific color theming and icons
-- **Smart button state**: Update Data button automatically disables when no cryptocurrencies are selected
+- **Smart button state**: Update Data button automatically disables when fewer than two cryptocurrencies are selected.
 - **Responsive layout**: Comparison cards automatically adjust to screen size for optimal viewing on all devices
 - **Visual consistency**: Maintains the same design language and animations as the single view
 
