@@ -1,4 +1,4 @@
-# 📊 Cryptocurrency Price Tracker PWA
+# 📈 Cryptocurrency Price Tracker PWA
 
 [![CI/CD](https://github.com/wlsf82/crypto-price-tracker/actions/workflows/cicd.yml/badge.svg)](https://github.com/wlsf82/crypto-price-tracker/actions/workflows/cicd.yml) [![crypto-price-tracker](https://img.shields.io/endpoint?url=https://cloud.cypress.io/badge/simple/7x6pkm&style=flat&logo=cypress)](https://cloud.cypress.io/projects/7x6pkm/runs)
 
@@ -44,7 +44,7 @@ Users can set custom price alerts for any supported cryptocurrency:
 - **Multiple Alerts**: Set multiple alerts per cryptocurrency with proper notification stacking
 - **User Control**: Alerts trigger every time conditions are met until manually removed
 
-### 📈 Comparison View
+### 📊 Comparison View
 
 The app features a dedicated comparison mode that allows users to:
 
