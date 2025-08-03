@@ -717,14 +717,13 @@ describe('Crypto Price Tracker', () => {
       cy.get('#comparison-price-ethereum').should('contain', '3,300.50')
     })
 
-    it('should show empty state when all checkboxes are unchecked', () => {
+    it('should show empty state when at least two checkboxes are unchecked', () => {
       // Uncheck all checkboxes
       cy.get('input[data-crypto="bitcoin"]').uncheck()
       cy.get('input[data-crypto="ethereum"]').uncheck()
-      cy.get('input[data-crypto="solana"]').uncheck()
 
       // Verify empty state message is displayed
-      cy.contains('.comparison-empty', 'Select cryptocurrencies to compare').should('be.visible')
+      cy.contains('.comparison-empty', 'Select at least two cryptocurrencies to compare').should('be.visible')
 
       // Verify no comparison cards are displayed
       cy.get('.comparison-card').should('not.exist')
@@ -733,7 +732,7 @@ describe('Crypto Price Tracker', () => {
       cy.get('#comparisonUpdateBtn').should('be.disabled')
 
       // Verify status shows error message
-      cy.contains('#comparisonStatusText', 'Select at least one cryptocurrency').should('be.visible')
+      cy.contains('#comparisonStatusText', 'Select at least two cryptocurrencies').should('be.visible')
       cy.get('#comparisonStatusDot').should('have.class', 'error')
     })
   })

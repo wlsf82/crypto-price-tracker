@@ -127,7 +127,7 @@ class CryptoPriceTracker {
 
     // Comparison update button
     this.elements.comparisonUpdateBtn.addEventListener('click', () => {
-      if (this.selectedCryptos.length > 0) {
+      if (this.selectedCryptos.length > 1) {
         this.fetchComparisonData();
       }
     });
@@ -285,19 +285,19 @@ class CryptoPriceTracker {
     if (this.currentView === 'comparison') {
       this.updateComparisonButtonState();
       this.renderComparisonCards();
-      if (this.selectedCryptos.length > 0) {
+      if (this.selectedCryptos.length > 1) {
         this.fetchComparisonData();
       } else {
-        this.updateComparisonStatus('error', 'Select at least one cryptocurrency');
+        this.updateComparisonStatus('error', 'Select at least two cryptocurrencies');
       }
     }
   }
 
   updateComparisonButtonState() {
-    const hasSelection = this.selectedCryptos.length > 0;
+    const hasSelection = this.selectedCryptos.length > 2;
     this.elements.comparisonUpdateBtn.disabled = !hasSelection;
   }  async fetchComparisonData() {
-    if (this.isLoading || this.selectedCryptos.length === 0) return;
+    if (this.isLoading || this.selectedCryptos.length < 2) return;
 
     try {
       this.isLoading = true;
@@ -365,8 +365,8 @@ class CryptoPriceTracker {
   }
 
   renderComparisonCards() {
-    if (this.selectedCryptos.length === 0) {
-      this.elements.comparisonCards.innerHTML = '<div class="comparison-empty">Select cryptocurrencies to compare</div>';
+    if (this.selectedCryptos.length < 2) {
+      this.elements.comparisonCards.innerHTML = '<div class="comparison-empty">Select at least two cryptocurrencies to compare</div>';
       return;
     }
 
