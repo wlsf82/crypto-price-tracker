@@ -504,6 +504,63 @@ describe('Crypto Price Tracker', () => {
       // Verify trillion formatting for market cap
       cy.contains('#marketCap', 'T').should('be.visible')
     })
+
+    it('should display approximate market cap symbol (~) for calculated values from Binance API', () => {
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
+        fixture: 'binance-api-success.json'
+      }).as('binanceAPI')
+
+      cy.visit(url)
+      cy.wait('@binanceAPI')
+
+      // Market cap from Binance should show ~ symbol since it's calculated from hardcoded supply
+      cy.get('#marketCap').should('contain.text', '~')
+      cy.get('#marketCap').should('contain.text', '$')
+      cy.get('#marketCap').should('contain.text', 'T')
+    })
+
+    it('should NOT display approximate market cap symbol (~) for actual values from CoinGecko API', () => {
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
+        statusCode: 500
+      }).as('binanceFail')
+
+      cy.intercept('GET', '**/get?url=*coingecko*', {
+        fixture: 'coingecko-proxy-success.json'
+      }).as('coingeckoAPI')
+
+      cy.visit(url)
+      cy.wait('@binanceFail')
+      cy.wait('@coingeckoAPI')
+
+      // Market cap from CoinGecko should NOT show ~ symbol since it's actual market cap data
+      cy.get('#marketCap').should('not.contain.text', '~')
+      cy.get('#marketCap').should('contain.text', '$')
+      cy.get('#marketCap').should('contain.text', 'T')
+    })
+
+    it('should display approximate market cap symbol (~) for calculated values from Kraken API', () => {
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
+        statusCode: 500
+      }).as('binanceFail')
+
+      cy.intercept('GET', '**/get?url=*coingecko*', {
+        statusCode: 500
+      }).as('coingeckoFail')
+
+      cy.intercept('GET', 'https://api.kraken.com/0/public/Ticker?pair=XBTUSD', {
+        fixture: 'kraken-api-success.json'
+      }).as('krakenAPI')
+
+      cy.visit(url)
+      cy.wait('@binanceFail')
+      cy.wait('@coingeckoFail')
+      cy.wait('@krakenAPI')
+
+      // Market cap from Kraken should show ~ symbol since it's calculated from hardcoded supply
+      cy.get('#marketCap').should('contain.text', '~')
+      cy.get('#marketCap').should('contain.text', '$')
+      cy.get('#marketCap').should('contain.text', 'T')
+    })
   })
 
   context('Price Alerts', () => {
@@ -734,6 +791,23 @@ describe('Crypto Price Tracker', () => {
       // Verify status shows error message
       cy.contains('#comparisonStatusText', 'Select at least two cryptocurrencies').should('be.visible')
       cy.get('#comparisonStatusDot').should('have.class', 'error')
+    })
+
+    it('should display approximate market cap symbol (~) in comparison view for calculated values', () => {
+      // Wait for initial data load
+      cy.wait('@ethereumAPI')
+      cy.wait('@solanaAPI')
+
+      // Verify market cap shows ~ symbol for all cryptocurrencies since they use Binance API (calculated values)
+      cy.get('#comparison-mcap-bitcoin').should('contain.text', '~')
+      cy.get('#comparison-mcap-bitcoin').should('contain.text', '$')
+      cy.get('#comparison-mcap-bitcoin').should('contain.text', 'T')
+
+      cy.get('#comparison-mcap-ethereum').should('contain.text', '~')
+      cy.get('#comparison-mcap-ethereum').should('contain.text', '$')
+
+      cy.get('#comparison-mcap-solana').should('contain.text', '~')
+      cy.get('#comparison-mcap-solana').should('contain.text', '$')
     })
   })
 

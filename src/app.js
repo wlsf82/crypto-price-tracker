@@ -405,7 +405,7 @@ class CryptoPriceTracker {
             <div class="comparison-stat">
               <div class="comparison-stat-label">Market Cap</div>
               <div class="comparison-stat-value" id="comparison-mcap-${crypto}">
-                ${data ? this.formatLargeNumber(data.marketData.marketCap) : '--'}
+                ${data ? this.formatMarketCap(data.marketData.marketCap, data.marketData.isMarketCapCalculated) : '--'}
               </div>
             </div>
             <div class="comparison-stat">
@@ -522,7 +522,8 @@ class CryptoPriceTracker {
           high24h: parseFloat(data.highPrice),
           low24h: parseFloat(data.lowPrice),
           marketCap: price * config.circulatingSupply,
-          volume24h: volume24h
+          volume24h: volume24h,
+          isMarketCapCalculated: true // Flag indicating market cap is calculated from hardcoded supply
         }
       };
     } catch (error) {
@@ -557,7 +558,8 @@ class CryptoPriceTracker {
           high24h: cryptoData.usd_high_24h,
           low24h: cryptoData.usd_low_24h,
           marketCap: cryptoData.usd_market_cap,
-          volume24h: cryptoData.usd_24h_vol
+          volume24h: cryptoData.usd_24h_vol,
+          isMarketCapCalculated: false // CoinGecko provides actual market cap data
         }
       };
     } catch (error) {
@@ -605,7 +607,8 @@ class CryptoPriceTracker {
           high24h: high24h,
           low24h: low24h,
           marketCap: price * config.circulatingSupply,
-          volume24h: volume24h
+          volume24h: volume24h,
+          isMarketCapCalculated: true // Flag indicating market cap is calculated from hardcoded supply
         }
       };
     } catch (error) {
@@ -653,7 +656,7 @@ class CryptoPriceTracker {
   updateMarketData(data) {
     this.elements.high24h.textContent = this.formatCurrency(data.high24h);
     this.elements.low24h.textContent = this.formatCurrency(data.low24h);
-    this.elements.marketCap.textContent = this.formatLargeNumber(data.marketCap);
+    this.elements.marketCap.textContent = this.formatMarketCap(data.marketCap, data.isMarketCapCalculated);
     this.elements.volume24h.textContent = this.formatLargeNumber(data.volume24h);
   }
 
@@ -700,6 +703,11 @@ class CryptoPriceTracker {
     } else {
       return this.formatCurrency(num);
     }
+  }
+
+  formatMarketCap(num, isCalculated = false) {
+    const formatted = this.formatLargeNumber(num);
+    return isCalculated ? `~${formatted}` : formatted;
   }
 
   // Alert Management Methods
