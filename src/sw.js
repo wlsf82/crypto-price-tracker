@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bitcoin-tracker-v8';
+const CACHE_NAME = 'bitcoin-tracker-v9';
 const urlsToCache = [
   './index.html',
   './styles.css',
