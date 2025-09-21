@@ -671,9 +671,13 @@ describe('Crypto Price Tracker', () => {
       // Verify the alert notification appears
       cy.contains('.alert-notification', 'Bitcoin is now below $50,000.00! Current price: $45,000.00')
         .should('be.visible')
+
+      // Alert should be auto-removed from the list
+      cy.contains('.alert-item', '$50,000.00').should('not.exist')
+      cy.contains('.alerts-empty', 'No price alerts set').should('be.visible')
     })
 
-    it('should allow removing an alert', () => {
+    it('should auto-remove alerts on trigger', () => {
       // Grant notification permission before the test
       cy.window().then((win) => {
         cy.stub(win.Notification, 'requestPermission').resolves('granted')
@@ -683,19 +687,25 @@ describe('Crypto Price Tracker', () => {
         })
       })
 
-      // Add an alert first
-      cy.get('[placeholder="Price in USD"]').type('55000')
+      // Add an alert below current price so it will trigger on next update
+      cy.get('[placeholder="Price in USD"]').type('50000')
+      cy.get('#alertCondition').select('below')
       cy.contains('button', 'Add Alert').click()
 
       // Verify alert was added
-      cy.contains('.alert-item', '$55,000.00').should('be.visible')
-      cy.get('.alerts-empty').should('not.exist')
+      cy.contains('.alert-item', '$50,000.00').should('be.visible')
 
-      // Remove the alert
-      cy.get('.remove-alert-btn').click()
+      // Mock API response with price below the alert threshold
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
+        fixture: 'binance-below-alert.json'
+      }).as('binanceBelowAlert')
 
-      // Verify alert was removed and empty state is shown
-      cy.contains('.alert-item', '$55,000.00').should('not.exist')
+      // Click update to trigger price check
+      cy.get('#updateBtn').click()
+      cy.wait('@binanceBelowAlert')
+
+      // Alert should be auto-removed from the list
+      cy.contains('.alert-item', '$50,000.00').should('not.exist')
       cy.contains('.alerts-empty', 'No price alerts set').should('be.visible')
     })
   })

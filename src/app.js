@@ -787,8 +787,13 @@ class CryptoPriceTracker {
       }
     });
 
-    // If multiple alerts triggered, show them all
+    // Auto-remove triggered alerts
     if (triggeredAlerts.length > 0) {
+      const triggeredIds = new Set(triggeredAlerts.map(a => a.id));
+      this.alerts = this.alerts.filter(a => !triggeredIds.has(a.id));
+      this.saveAlertsToStorage();
+      this.renderAlerts();
+      // Notify after removal
       this.triggerMultipleAlerts(triggeredAlerts, currentPrice);
     }
   }
@@ -811,8 +816,16 @@ class CryptoPriceTracker {
       }
     });
 
-    // If multiple alerts triggered, show them all
+    // Auto-remove triggered alerts
     if (triggeredAlerts.length > 0) {
+      const triggeredIds = new Set(triggeredAlerts.map(a => a.id));
+      this.alerts = this.alerts.filter(a => !triggeredIds.has(a.id));
+      this.saveAlertsToStorage();
+      // Only re-render alerts list if current view is showing the same crypto
+      if (this.currentView === 'single' && this.currentCrypto === crypto) {
+        this.renderAlerts();
+      }
+      // Notify after removal
       this.triggerMultipleAlerts(triggeredAlerts, currentPrice);
     }
   }
@@ -950,11 +963,6 @@ class CryptoPriceTracker {
               ${this.cryptoConfig[alertItem.crypto].name} • Created ${new Date(alertItem.created).toLocaleDateString()}
             </div>
             <div class="alert-status active">🔔 Active</div>
-          </div>
-          <div class="alert-actions">
-            <button type="button" class="remove-alert-btn" onclick="window.tracker.removeAlert('${alertItem.id}')">
-              ❌ Remove
-            </button>
           </div>
         </div>
       `;
