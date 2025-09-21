@@ -708,6 +708,32 @@ describe('Crypto Price Tracker', () => {
       cy.contains('.alert-item', '$50,000.00').should('not.exist')
       cy.contains('.alerts-empty', 'No price alerts set').should('be.visible')
     })
+
+    it('should allow removing an alert manually', () => {
+      // Grant notification permission before the test
+      cy.window().then((win) => {
+        cy.stub(win.Notification, 'requestPermission').resolves('granted')
+        Object.defineProperty(win.Notification, 'permission', {
+          writable: true,
+          value: 'granted'
+        })
+      })
+
+      // Add an alert first
+      cy.get('[placeholder="Price in USD"]').type('55000')
+      cy.contains('button', 'Add Alert').click()
+
+      // Verify alert was added
+      cy.contains('.alert-item', '$55,000.00').should('be.visible')
+      cy.get('.alerts-empty').should('not.exist')
+
+      // Remove the alert manually
+      cy.get('.alert-item:contains("$55,000.00") .remove-alert-btn').click()
+
+      // Verify alert was removed and empty state is shown
+      cy.contains('.alert-item', '$55,000.00').should('not.exist')
+      cy.contains('.alerts-empty', 'No price alerts set').should('be.visible')
+    })
   })
 
   context('Compare View', () => {

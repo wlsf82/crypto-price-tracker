@@ -44,7 +44,7 @@ Users can set custom price alerts for any supported cryptocurrency:
 - **Persistent Storage**: Alerts are saved in browser localStorage and persist across sessions until they trigger
 - **Push Notifications**: Receive browser notifications when alert conditions are met (requires notification permission)
 - **Multiple Alerts**: Set multiple alerts per cryptocurrency with proper notification stacking; each alert fires once independently
-- **No Manual Removal Needed**: There is no Remove button; if you need a different threshold, simply add a new alert
+- **Manual Removal**: You can also remove an alert anytime via the Remove button
 
 ### 📊 Comparison View
 

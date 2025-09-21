@@ -964,6 +964,11 @@ class CryptoPriceTracker {
             </div>
             <div class="alert-status active">🔔 Active</div>
           </div>
+          <div class="alert-actions">
+            <button type="button" class="remove-alert-btn" onclick="window.tracker.removeAlert('${alertItem.id}')">
+              ❌ Remove
+            </button>
+          </div>
         </div>
       `;
     }).join('');
