@@ -10,7 +10,7 @@ A Progressive Web App that tracks cryptocurrency prices for Bitcoin (BTC), Ether
 - ✅ Cryptocurrency comparison view: Side-by-side comparison of multiple cryptocurrencies
 - ✅ Cryptocurrency selection with easy switching between currencies
 - ✅ View toggle: Switch between single cryptocurrency view and comparison view
-- ✅ **All-Time High (ATH) tracking**: Track and display the highest price reached for each cryptocurrency
+- ✅ All-Time High (ATH) tracking: Track and display the highest price reached for each cryptocurrency
 - ✅ Price alerts with push notifications - Set custom alerts for price thresholds
 - ✅ Price alerts with push notifications — set thresholds; alerts fire once and auto-remove
 - ✅ Automatic price updates every 10 seconds - Real-time data refresh
