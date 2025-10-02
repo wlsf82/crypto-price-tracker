@@ -10,6 +10,7 @@ A Progressive Web App that tracks cryptocurrency prices for Bitcoin (BTC), Ether
 - ✅ Cryptocurrency comparison view: Side-by-side comparison of multiple cryptocurrencies
 - ✅ Cryptocurrency selection with easy switching between currencies
 - ✅ View toggle: Switch between single cryptocurrency view and comparison view
+- ✅ **All-Time High (ATH) tracking**: Track and display the highest price reached for each cryptocurrency
 - ✅ Price alerts with push notifications - Set custom alerts for price thresholds
 - ✅ Price alerts with push notifications — set thresholds; alerts fire once and auto-remove
 - ✅ Automatic price updates every 10 seconds - Real-time data refresh
@@ -68,6 +69,26 @@ The app features a dedicated comparison mode that allows users to:
 3. View real-time data for all selected cryptocurrencies in individual cards
 4. Use the "Update Data" button to refresh all comparison data simultaneously
 5. Switch back to "Single View" to focus on one cryptocurrency at a time
+
+### 🏆 All-Time High (ATH) Tracking
+
+The app tracks and displays the all-time high price for each cryptocurrency:
+
+- **Initial ATH Values**: Each cryptocurrency starts with hardcoded initial ATH values:
+  - Bitcoin (BTC): $124,290.93
+  - Ethereum (ETH): $4,953.73
+  - Solana (SOL): $293.31
+- **Automatic Updates**: When a cryptocurrency's price exceeds its current ATH, the new high is automatically recorded
+- **Persistent Storage**: ATH values are stored in browser localStorage and persist across sessions
+- **Visual Feedback**: When a new ATH is reached:
+  - The ATH value flashes with a golden animation
+  - A celebration notification (🎉) appears announcing the new record
+- **Display Locations**: ATH is displayed in:
+  - **Single View**: In the Market Statistics section alongside 24h high/low
+  - **Comparison View**: In each cryptocurrency card for easy side-by-side comparison
+- **Independent Tracking**: Each cryptocurrency maintains its own ATH independently
+
+The ATH feature helps users track significant price milestones and understand the historical context of current prices.
 
 ## 🚀 Deployment
 
@@ -129,10 +150,12 @@ This app uses multiple reliable APIs with an automatic fallback system for all s
 - **View Modes**: Single cryptocurrency view and multi-cryptocurrency comparison view
 - **Update Method**: Automatic refresh every 10 seconds + manual refresh via button click
 - **Comparison Features**: Selective cryptocurrency comparison with individual data cards
+- **ATH Tracking**: All-time high prices stored in localStorage with automatic updates
 - **API Strategy**: Primary API with automatic fallback to secondary and tertiary APIs
 - **Primary API**: Binance 24hr ticker endpoint for multiple trading pairs
 - **Secondary API**: CoinGecko via AllOrigins CORS proxy
 - **Fallback API**: Kraken public ticker endpoint for multiple pairs
+- **Data Persistence**: Price alerts and ATH values stored in browser localStorage
 - **Caching Strategy**: Cache first for static resources, network first for API calls
 - **Browser Support**: Modern browsers with Service Worker support
 

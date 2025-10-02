@@ -924,4 +924,276 @@ describe('Crypto Price Tracker', () => {
       cy.get('.crypto-checkboxes').should('have.css', 'flex-direction', 'row')
     })
   })
+
+  context('All-Time High (ATH) Feature', () => {
+    beforeEach(() => {
+      cy.mockAllApisSuccess()
+    })
+
+    it('should display initial ATH values for Bitcoin in single view', () => {
+      cy.clearLocalStorage('cryptoATH')
+      cy.visit(url)
+      cy.wait('@binanceAPI')
+
+      // Verify ATH card exists and displays the initial hardcoded value for Bitcoin
+      cy.contains('h3', 'All-Time High').should('be.visible')
+      cy.get('#ath').should('contain', '$124,290.93')
+    })
+
+    it('should display ATH values for all cryptocurrencies in comparison view', () => {
+      cy.clearLocalStorage('cryptoATH')
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=ETHUSDT', {
+        fixture: 'binance-ethereum-success.json'
+      }).as('ethereumAPI')
+
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=SOLUSDT', {
+        fixture: 'binance-solana-success.json'
+      }).as('solanaAPI')
+
+      cy.visit(url)
+      cy.wait('@binanceAPI')
+
+      // Switch to comparison view
+      cy.get('.view-btn[data-view="comparison"]').click()
+      cy.wait('@ethereumAPI')
+      cy.wait('@solanaAPI')
+
+      // Verify ATH is displayed for each cryptocurrency with initial values
+      cy.get('#comparison-ath-bitcoin').should('contain', '$124,290.93')
+      cy.get('#comparison-ath-ethereum').should('contain', '$4,953.73')
+      cy.get('#comparison-ath-solana').should('contain', '$293.31')
+    })
+
+    it('should update ATH when Bitcoin price exceeds current ATH', () => {
+      // Set up localStorage with a lower ATH value to test update
+      cy.window().then((win) => {
+        win.localStorage.setItem('cryptoATH', JSON.stringify({
+          bitcoin: 50000.00,
+          ethereum: 4953.73,
+          solana: 293.31
+        }))
+      })
+
+      // Mock API with price higher than stored ATH
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
+        fixture: 'binance-api-success.json' // Price: 51,111.10
+      }).as('binanceAPI')
+
+      cy.visit(url)
+      cy.wait('@binanceAPI')
+
+      // Verify new ATH is displayed
+      cy.get('#ath').should('contain', '$51,111.10')
+
+      // Verify ATH is stored in localStorage
+      cy.window().then((win) => {
+        const athData = JSON.parse(win.localStorage.getItem('cryptoATH'))
+        expect(athData.bitcoin).to.equal(51111.10)
+      })
+
+      // Verify celebration notification appears
+      cy.contains('reached a new All-Time High').should('be.visible')
+    })
+
+    it('should not update ATH when price is below current ATH', () => {
+      // Set up localStorage with a higher ATH value
+      cy.window().then((win) => {
+        win.localStorage.setItem('cryptoATH', JSON.stringify({
+          bitcoin: 60000.00,
+          ethereum: 4953.73,
+          solana: 293.31
+        }))
+      })
+
+      cy.visit(url)
+      cy.wait('@binanceAPI')
+
+      // Verify ATH remains unchanged
+      cy.get('#ath').should('contain', '$60,000.00')
+
+      // Verify no celebration notification
+      cy.contains('reached a new All-Time High').should('not.exist')
+
+      // Verify localStorage still has the original ATH
+      cy.window().then((win) => {
+        const athData = JSON.parse(win.localStorage.getItem('cryptoATH'))
+        expect(athData.bitcoin).to.equal(60000.00)
+      })
+    })
+
+    it('should persist ATH values across page reloads', () => {
+      // Set custom ATH values
+      cy.window().then((win) => {
+        win.localStorage.setItem('cryptoATH', JSON.stringify({
+          bitcoin: 75000.00,
+          ethereum: 5500.00,
+          solana: 350.00
+        }))
+      })
+
+      cy.visit(url)
+      cy.wait('@binanceAPI')
+
+      // Verify custom ATH is displayed
+      cy.get('#ath').should('contain', '$75,000.00')
+
+      // Reload the page
+      cy.reload()
+      cy.wait('@binanceAPI')
+
+      // Verify ATH persists after reload
+      cy.get('#ath').should('contain', '$75,000.00')
+    })
+
+    it('should update ATH for different cryptocurrencies independently', () => {
+      // Set up initial ATH values
+      cy.window().then((win) => {
+        win.localStorage.setItem('cryptoATH', JSON.stringify({
+          bitcoin: 60000.00, // Set higher than fixture price to prevent update
+          ethereum: 3000.00,
+          solana: 200.00
+        }))
+      })
+
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=ETHUSDT', {
+        fixture: 'binance-ethereum-success.json' // Price: 3,300.50
+      }).as('ethereumAPI')
+
+      cy.visit(url)
+      cy.wait('@binanceAPI')
+
+      // Switch to Ethereum
+      cy.get('.crypto-btn[data-crypto="ethereum"]').click()
+      cy.wait('@ethereumAPI')
+
+      // Verify Ethereum ATH was updated
+      cy.get('#ath').should('contain', '$3,300.50')
+
+      // Verify localStorage updated only Ethereum
+      cy.window().then((win) => {
+        const athData = JSON.parse(win.localStorage.getItem('cryptoATH'))
+        expect(athData.bitcoin).to.equal(60000.00) // Unchanged
+        expect(athData.ethereum).to.equal(3300.50) // Updated
+        expect(athData.solana).to.equal(200.00) // Unchanged
+      })
+    })
+
+    it('should update ATH in comparison view when price exceeds current ATH', () => {
+      // Set up lower ATH values
+      cy.window().then((win) => {
+        win.localStorage.setItem('cryptoATH', JSON.stringify({
+          bitcoin: 50000.00,
+          ethereum: 3000.00,
+          solana: 200.00 // Set lower than fixture price to test update
+        }))
+      })
+
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=ETHUSDT', {
+        fixture: 'binance-ethereum-success.json' // Price: 3,300.50
+      }).as('ethereumAPI')
+
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=SOLUSDT', {
+        fixture: 'binance-solana-success.json' // Price: 238.75
+      }).as('solanaAPI')
+
+      cy.visit(url)
+      cy.wait('@binanceAPI')
+
+      // Switch to comparison view
+      cy.get('.view-btn[data-view="comparison"]').click()
+      cy.wait('@ethereumAPI')
+      cy.wait('@solanaAPI')
+
+      // Verify ATH values updated where prices exceeded previous ATH
+      cy.get('#comparison-ath-bitcoin').should('contain', '$51,111.10') // Updated
+      cy.get('#comparison-ath-ethereum').should('contain', '$3,300.50') // Updated
+      cy.get('#comparison-ath-solana').should('contain', '$238.75') // Updated (238.75 > 200.00)
+
+      // Verify localStorage reflects the updates
+      cy.window().then((win) => {
+        const athData = JSON.parse(win.localStorage.getItem('cryptoATH'))
+        expect(athData.bitcoin).to.equal(51111.10)
+        expect(athData.ethereum).to.equal(3300.50)
+        expect(athData.solana).to.equal(238.75)
+      })
+    })
+
+    it('should initialize ATH from hardcoded values if no localStorage data exists', () => {
+      // Visit with cleared localStorage
+      cy.visit(url, {
+        onBeforeLoad(win) {
+          win.localStorage.removeItem('cryptoATH')
+        }
+      })
+      cy.wait('@binanceAPI')
+
+      // Verify initial hardcoded ATH is displayed
+      cy.get('#ath').should('contain', '$124,290.93')
+
+      // Verify localStorage was populated with initial values
+      cy.window().its('localStorage').invoke('getItem', 'cryptoATH').should('exist').then((athDataString) => {
+        const athData = JSON.parse(athDataString)
+        expect(athData).to.be.an('object')
+        expect(athData.bitcoin).to.equal(124290.93)
+        expect(athData.ethereum).to.equal(4953.73)
+        expect(athData.solana).to.equal(293.31)
+      })
+    })
+
+    it('should display ATH with proper currency formatting', () => {
+      // Set up ATH with various number formats
+      cy.window().then((win) => {
+        win.localStorage.setItem('cryptoATH', JSON.stringify({
+          bitcoin: 123456.78,
+          ethereum: 9876.54,
+          solana: 321.09
+        }))
+      })
+
+      cy.visit(url)
+      cy.wait('@binanceAPI')
+
+      // Verify proper formatting with comma and decimal places
+      cy.get('#ath').should('contain', '$123,456.78')
+    })
+
+    it('should switch between cryptocurrencies and show correct ATH for each', () => {
+      cy.window().then((win) => {
+        win.localStorage.setItem('cryptoATH', JSON.stringify({
+          bitcoin: 100000.00,
+          ethereum: 5000.00,
+          solana: 250.00
+        }))
+      })
+
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=ETHUSDT', {
+        fixture: 'binance-ethereum-success.json'
+      }).as('ethereumAPI')
+
+      cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=SOLUSDT', {
+        fixture: 'binance-solana-success.json'
+      }).as('solanaAPI')
+
+      cy.visit(url)
+      cy.wait('@binanceAPI')
+
+      // Verify Bitcoin ATH
+      cy.get('#ath').should('contain', '$100,000.00')
+
+      // Switch to Ethereum
+      cy.get('.crypto-btn[data-crypto="ethereum"]').click()
+      cy.wait('@ethereumAPI')
+      cy.get('#ath').should('contain', '$5,000.00')
+
+      // Switch to Solana
+      cy.get('.crypto-btn[data-crypto="solana"]').click()
+      cy.wait('@solanaAPI')
+      cy.get('#ath').should('contain', '$250.00')
+
+      // Switch back to Bitcoin
+      cy.get('.crypto-btn[data-crypto="bitcoin"]').click()
+      cy.wait('@binanceAPI')
+      cy.get('#ath').should('contain', '$100,000.00')
+    })
+  })
 })

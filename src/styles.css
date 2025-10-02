@@ -363,6 +363,36 @@ main {
   50% { opacity: 0.5; }
 }
 
+/* ATH (All-Time High) styling */
+.ath-value {
+  position: relative;
+}
+
+@keyframes flash-ath {
+  0%, 100% {
+    background: transparent;
+    transform: scale(1);
+  }
+  25% {
+    background: rgba(255, 215, 0, 0.3);
+    transform: scale(1.1);
+  }
+  50% {
+    background: rgba(255, 215, 0, 0.5);
+    transform: scale(1.15);
+  }
+  75% {
+    background: rgba(255, 215, 0, 0.3);
+    transform: scale(1.1);
+  }
+}
+
+.flash-ath {
+  animation: flash-ath 1s ease-in-out;
+  border-radius: 8px;
+  padding: 0.25rem 0.5rem;
+}
+
 .info-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));

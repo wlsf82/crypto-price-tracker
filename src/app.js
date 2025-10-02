@@ -20,7 +20,8 @@ class CryptoPriceTracker {
         binanceSymbol: 'BTCUSDT',
         krakenSymbol: 'XBTUSD',
         coingeckoId: 'bitcoin',
-        circulatingSupply: 19895806 // Approximate BTC circulating supply (as of 2025-07-22)
+        circulatingSupply: 19895806, // Approximate BTC circulating supply (as of 2025-07-22)
+        initialATH: 124290.93 // Initial All-Time High
       },
       ethereum: {
         name: 'Ethereum',
@@ -30,7 +31,8 @@ class CryptoPriceTracker {
         binanceSymbol: 'ETHUSDT',
         krakenSymbol: 'XETHZUSD',
         coingeckoId: 'ethereum',
-        circulatingSupply: 120711486.28015 // Approximate ETH circulating supply (as of 2025-07-22)
+        circulatingSupply: 120711486.28015, // Approximate ETH circulating supply (as of 2025-07-22)
+        initialATH: 4953.73 // Initial All-Time High
       },
       solana: {
         name: 'Solana',
@@ -40,9 +42,13 @@ class CryptoPriceTracker {
         binanceSymbol: 'SOLUSDT',
         krakenSymbol: 'SOLUSD',
         coingeckoId: 'solana',
-        circulatingSupply: 538045783.177941 // Approximate SOL circulating supply (as of 2025-07-22)
+        circulatingSupply: 538045783.177941, // Approximate SOL circulating supply (as of 2025-07-22)
+        initialATH: 293.31 // Initial All-Time High
       }
     };
+
+    // Initialize ATH data from localStorage or use initial values
+    this.athData = this.loadATHFromStorage();
 
     this.initializeElements();
     this.registerServiceWorker();
@@ -84,6 +90,7 @@ class CryptoPriceTracker {
       statusText: document.getElementById('statusText'),
       high24h: document.getElementById('high24h'),
       low24h: document.getElementById('low24h'),
+      ath: document.getElementById('ath'),
       marketCap: document.getElementById('marketCap'),
       volume24h: document.getElementById('volume24h'),
       updateBtn: document.getElementById('updateBtn'),
@@ -315,6 +322,9 @@ class CryptoPriceTracker {
           this.comparisonData[crypto] = result.value;
           successCount++;
 
+          // Check and update ATH for this cryptocurrency
+          this.checkAndUpdateATH(crypto, result.value.price);
+
           // Check alerts for this cryptocurrency in comparison view
           this.checkAlertsForCrypto(crypto, result.value.price);
         } else {
@@ -400,6 +410,12 @@ class CryptoPriceTracker {
               <div class="comparison-stat-label">24h Low</div>
               <div class="comparison-stat-value" id="comparison-low-${crypto}">
                 ${data ? this.formatCurrency(data.marketData.low24h) : '--'}
+              </div>
+            </div>
+            <div class="comparison-stat">
+              <div class="comparison-stat-label">All-Time High</div>
+              <div class="comparison-stat-value ath-value" id="comparison-ath-${crypto}">
+                ${this.formatCurrency(this.athData[crypto])}
               </div>
             </div>
             <div class="comparison-stat">
@@ -628,6 +644,9 @@ class CryptoPriceTracker {
 
     this.elements.price.textContent = formattedPrice;
 
+    // Check and update ATH if new high is reached
+    this.checkAndUpdateATH(this.currentCrypto, newPrice);
+
     // Check alerts before updating lastPrice
     this.checkAlerts(newPrice);
 
@@ -656,6 +675,7 @@ class CryptoPriceTracker {
   updateMarketData(data) {
     this.elements.high24h.textContent = this.formatCurrency(data.high24h);
     this.elements.low24h.textContent = this.formatCurrency(data.low24h);
+    this.elements.ath.textContent = this.formatCurrency(this.athData[this.currentCrypto]);
     this.elements.marketCap.textContent = this.formatMarketCap(data.marketCap, data.isMarketCapCalculated);
     this.elements.volume24h.textContent = this.formatLargeNumber(data.volume24h);
   }
@@ -708,6 +728,71 @@ class CryptoPriceTracker {
   formatMarketCap(num, isCalculated = false) {
     const formatted = this.formatLargeNumber(num);
     return isCalculated ? `~${formatted}` : formatted;
+  }
+
+  // ATH (All-Time High) Management Methods
+  loadATHFromStorage() {
+    try {
+      const saved = localStorage.getItem('cryptoATH');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (error) {
+      console.error('Error loading ATH from storage:', error);
+    }
+    
+    // Return initial ATH values if nothing in storage
+    const initialATH = {
+      bitcoin: this.cryptoConfig.bitcoin.initialATH,
+      ethereum: this.cryptoConfig.ethereum.initialATH,
+      solana: this.cryptoConfig.solana.initialATH
+    };
+    
+    // Save initial values to localStorage
+    try {
+      localStorage.setItem('cryptoATH', JSON.stringify(initialATH));
+    } catch (error) {
+      console.error('Error saving initial ATH to storage:', error);
+    }
+    
+    return initialATH;
+  }
+
+  saveATHToStorage() {
+    try {
+      localStorage.setItem('cryptoATH', JSON.stringify(this.athData));
+    } catch (error) {
+      console.error('Error saving ATH to storage:', error);
+    }
+  }
+
+  checkAndUpdateATH(crypto, currentPrice) {
+    const currentATH = this.athData[crypto];
+    
+    if (currentPrice > currentATH) {
+      // New all-time high!
+      this.athData[crypto] = currentPrice;
+      this.saveATHToStorage();
+      
+      // Update display in single view if that's the current crypto
+      if (this.currentView === 'single' && this.currentCrypto === crypto && this.elements.ath) {
+        this.elements.ath.textContent = this.formatCurrency(currentPrice);
+        this.elements.ath.classList.add('flash-ath');
+        setTimeout(() => this.elements.ath.classList.remove('flash-ath'), 1000);
+      }
+      
+      // Update display in comparison view
+      const comparisonATHElement = document.getElementById(`comparison-ath-${crypto}`);
+      if (comparisonATHElement) {
+        comparisonATHElement.textContent = this.formatCurrency(currentPrice);
+        comparisonATHElement.classList.add('flash-ath');
+        setTimeout(() => comparisonATHElement.classList.remove('flash-ath'), 1000);
+      }
+      
+      // Show notification
+      const cryptoConfig = this.cryptoConfig[crypto];
+      this.showAlertConfirmation(`🎉 ${cryptoConfig.name} reached a new All-Time High: ${this.formatCurrency(currentPrice)}!`, 'success');
+    }
   }
 
   // Alert Management Methods
