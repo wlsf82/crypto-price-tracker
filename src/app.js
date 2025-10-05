@@ -322,8 +322,8 @@ class CryptoPriceTracker {
           this.comparisonData[crypto] = result.value;
           successCount++;
 
-          // Check and update ATH for this cryptocurrency
-          this.checkAndUpdateATH(crypto, result.value.price);
+          // Check and update ATH for this cryptocurrency with market data
+          this.checkAndUpdateATH(crypto, result.value.price, result.value.marketData);
 
           // Check alerts for this cryptocurrency in comparison view
           this.checkAlertsForCrypto(crypto, result.value.price);
@@ -500,6 +500,9 @@ class CryptoPriceTracker {
         this.updateMarketData(priceData.marketData);
         this.updateLastUpdated();
         this.updateStatus('connected', 'Data updated');
+
+        // Check and update ATH with both current price and market data
+        this.checkAndUpdateATH(this.currentCrypto, priceData.price, priceData.marketData);
       } else {
         throw new Error('All APIs failed');
       }
@@ -644,9 +647,6 @@ class CryptoPriceTracker {
 
     this.elements.price.textContent = formattedPrice;
 
-    // Check and update ATH if new high is reached
-    this.checkAndUpdateATH(this.currentCrypto, newPrice);
-
     // Check alerts before updating lastPrice
     this.checkAlerts(newPrice);
 
@@ -766,32 +766,38 @@ class CryptoPriceTracker {
     }
   }
 
-  checkAndUpdateATH(crypto, currentPrice) {
+  checkAndUpdateATH(crypto, currentPrice, marketData = null) {
     const currentATH = this.athData[crypto];
-    
-    if (currentPrice > currentATH) {
+
+    // Check both current price and 24h high to find the actual highest price
+    let newATH = currentPrice;
+    if (marketData && marketData.high24h && marketData.high24h > newATH) {
+      newATH = marketData.high24h;
+    }
+
+    if (newATH > currentATH) {
       // New all-time high!
-      this.athData[crypto] = currentPrice;
+      this.athData[crypto] = newATH;
       this.saveATHToStorage();
-      
+
       // Update display in single view if that's the current crypto
       if (this.currentView === 'single' && this.currentCrypto === crypto && this.elements.ath) {
-        this.elements.ath.textContent = this.formatCurrency(currentPrice);
+        this.elements.ath.textContent = this.formatCurrency(newATH);
         this.elements.ath.classList.add('flash-ath');
         setTimeout(() => this.elements.ath.classList.remove('flash-ath'), 1000);
       }
-      
+
       // Update display in comparison view
       const comparisonATHElement = document.getElementById(`comparison-ath-${crypto}`);
       if (comparisonATHElement) {
-        comparisonATHElement.textContent = this.formatCurrency(currentPrice);
+        comparisonATHElement.textContent = this.formatCurrency(newATH);
         comparisonATHElement.classList.add('flash-ath');
         setTimeout(() => comparisonATHElement.classList.remove('flash-ath'), 1000);
       }
-      
+
       // Show notification
       const cryptoConfig = this.cryptoConfig[crypto];
-      this.showAlertConfirmation(`🎉 ${cryptoConfig.name} reached a new All-Time High: ${this.formatCurrency(currentPrice)}!`, 'success');
+      this.showAlertConfirmation(`🎉 ${cryptoConfig.name} reached a new All-Time High: ${this.formatCurrency(newATH)}!`, 'success');
     }
   }
 

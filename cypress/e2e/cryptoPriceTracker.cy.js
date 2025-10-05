@@ -975,20 +975,22 @@ describe('Crypto Price Tracker', () => {
       })
 
       // Mock API with price higher than stored ATH
+      // Note: fixture has lastPrice: 51,111.10 and highPrice: 52,000.00
+      // ATH should update to the higher value (52,000.00)
       cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT', {
-        fixture: 'binance-api-success.json' // Price: 51,111.10
+        fixture: 'binance-api-success.json'
       }).as('binanceAPI')
 
       cy.visit(url)
       cy.wait('@binanceAPI')
 
-      // Verify new ATH is displayed
-      cy.get('#ath').should('contain', '$51,111.10')
+      // Verify new ATH is displayed (should be 24h high, not current price)
+      cy.get('#ath').should('contain', '$52,000.00')
 
       // Verify ATH is stored in localStorage
       cy.window().then((win) => {
         const athData = JSON.parse(win.localStorage.getItem('cryptoATH'))
-        expect(athData.bitcoin).to.equal(51111.10)
+        expect(athData.bitcoin).to.equal(52000.00)
       })
 
       // Verify celebration notification appears
@@ -1056,7 +1058,7 @@ describe('Crypto Price Tracker', () => {
       })
 
       cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=ETHUSDT', {
-        fixture: 'binance-ethereum-success.json' // Price: 3,300.50
+        fixture: 'binance-ethereum-success.json' // lastPrice: 3,300.50, highPrice: 3,450.00
       }).as('ethereumAPI')
 
       cy.visit(url)
@@ -1066,14 +1068,14 @@ describe('Crypto Price Tracker', () => {
       cy.get('.crypto-btn[data-crypto="ethereum"]').click()
       cy.wait('@ethereumAPI')
 
-      // Verify Ethereum ATH was updated
-      cy.get('#ath').should('contain', '$3,300.50')
+      // Verify Ethereum ATH was updated to 24h high
+      cy.get('#ath').should('contain', '$3,450.00')
 
       // Verify localStorage updated only Ethereum
       cy.window().then((win) => {
         const athData = JSON.parse(win.localStorage.getItem('cryptoATH'))
         expect(athData.bitcoin).to.equal(60000.00) // Unchanged
-        expect(athData.ethereum).to.equal(3300.50) // Updated
+        expect(athData.ethereum).to.equal(3450.00) // Updated to 24h high
         expect(athData.solana).to.equal(200.00) // Unchanged
       })
     })
@@ -1089,11 +1091,11 @@ describe('Crypto Price Tracker', () => {
       })
 
       cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=ETHUSDT', {
-        fixture: 'binance-ethereum-success.json' // Price: 3,300.50
+        fixture: 'binance-ethereum-success.json' // lastPrice: 3,300.50, highPrice: 3,450.00
       }).as('ethereumAPI')
 
       cy.intercept('GET', 'https://api.binance.com/api/v3/ticker/24hr?symbol=SOLUSDT', {
-        fixture: 'binance-solana-success.json' // Price: 238.75
+        fixture: 'binance-solana-success.json' // lastPrice: 238.75, highPrice: 250.00
       }).as('solanaAPI')
 
       cy.visit(url)
@@ -1104,17 +1106,17 @@ describe('Crypto Price Tracker', () => {
       cy.wait('@ethereumAPI')
       cy.wait('@solanaAPI')
 
-      // Verify ATH values updated where prices exceeded previous ATH
-      cy.get('#comparison-ath-bitcoin').should('contain', '$51,111.10') // Updated
-      cy.get('#comparison-ath-ethereum').should('contain', '$3,300.50') // Updated
-      cy.get('#comparison-ath-solana').should('contain', '$238.75') // Updated (238.75 > 200.00)
+      // Verify ATH values updated to 24h highs where they exceeded previous ATH
+      cy.get('#comparison-ath-bitcoin').should('contain', '$52,000.00') // Updated to 24h high
+      cy.get('#comparison-ath-ethereum').should('contain', '$3,450.00') // Updated to 24h high
+      cy.get('#comparison-ath-solana').should('contain', '$250.00') // Updated to 24h high
 
       // Verify localStorage reflects the updates
       cy.window().then((win) => {
         const athData = JSON.parse(win.localStorage.getItem('cryptoATH'))
-        expect(athData.bitcoin).to.equal(51111.10)
-        expect(athData.ethereum).to.equal(3300.50)
-        expect(athData.solana).to.equal(238.75)
+        expect(athData.bitcoin).to.equal(52000.00)
+        expect(athData.ethereum).to.equal(3450.00)
+        expect(athData.solana).to.equal(250.00)
       })
     })
 
