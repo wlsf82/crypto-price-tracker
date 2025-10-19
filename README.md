@@ -75,7 +75,7 @@ The app features a dedicated comparison mode that allows users to:
 The app tracks and displays the all-time high price for each cryptocurrency:
 
 - **Initial ATH Values**: Each cryptocurrency starts with hardcoded initial ATH values:
-  - Bitcoin (BTC): $124,290.93
+  - Bitcoin (BTC): $126,199.63
   - Ethereum (ETH): $4,953.73
   - Solana (SOL): $293.31
 - **Automatic Updates**: When a cryptocurrency's price exceeds its current ATH, the new high is automatically recorded
