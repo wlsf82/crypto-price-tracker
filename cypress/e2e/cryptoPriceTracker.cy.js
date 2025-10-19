@@ -937,7 +937,7 @@ describe('Crypto Price Tracker', () => {
 
       // Verify ATH card exists and displays the initial hardcoded value for Bitcoin
       cy.contains('h3', 'All-Time High').should('be.visible')
-      cy.get('#ath').should('contain', '$125,819.20')
+      cy.get('#ath').should('contain', '$126,199.63')
     })
 
     it('should display ATH values for all cryptocurrencies in comparison view', () => {
@@ -959,7 +959,7 @@ describe('Crypto Price Tracker', () => {
       cy.wait('@solanaAPI')
 
       // Verify ATH is displayed for each cryptocurrency with initial values
-      cy.get('#comparison-ath-bitcoin').should('contain', '$125,819.20')
+      cy.get('#comparison-ath-bitcoin').should('contain', '$126,199.63')
       cy.get('#comparison-ath-ethereum').should('contain', '$4,953.73')
       cy.get('#comparison-ath-solana').should('contain', '$293.31')
     })
@@ -1130,13 +1130,13 @@ describe('Crypto Price Tracker', () => {
       cy.wait('@binanceAPI')
 
       // Verify initial hardcoded ATH is displayed
-      cy.get('#ath').should('contain', '$125,819.20')
+      cy.get('#ath').should('contain', '$126,199.63')
 
       // Verify localStorage was populated with initial values
       cy.window().its('localStorage').invoke('getItem', 'cryptoATH').should('exist').then((athDataString) => {
         const athData = JSON.parse(athDataString)
         expect(athData).to.be.an('object')
-        expect(athData.bitcoin).to.equal(125819.20)
+        expect(athData.bitcoin).to.equal(126199.63)
         expect(athData.ethereum).to.equal(4953.73)
         expect(athData.solana).to.equal(293.31)
       })

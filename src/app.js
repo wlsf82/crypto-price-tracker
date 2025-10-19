@@ -21,7 +21,7 @@ class CryptoPriceTracker {
         krakenSymbol: 'XBTUSD',
         coingeckoId: 'bitcoin',
         circulatingSupply: 19895806, // Approximate BTC circulating supply (as of 2025-07-22)
-        initialATH: 125819.20 // Initial All-Time High
+        initialATH: 126199.63 // Initial All-Time High
       },
       ethereum: {
         name: 'Ethereum',
