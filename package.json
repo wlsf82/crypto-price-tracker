@@ -26,6 +26,6 @@
     "url": "https://github.com/wlsf82/bitcoin-price.git"
   },
   "devDependencies": {
-    "cypress": "^15.5.0"
+    "cypress": "^15.6.0"
   }
 }
