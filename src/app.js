@@ -740,21 +740,21 @@ class CryptoPriceTracker {
     } catch (error) {
       console.error('Error loading ATH from storage:', error);
     }
-    
+
     // Return initial ATH values if nothing in storage
     const initialATH = {
       bitcoin: this.cryptoConfig.bitcoin.initialATH,
       ethereum: this.cryptoConfig.ethereum.initialATH,
       solana: this.cryptoConfig.solana.initialATH
     };
-    
+
     // Save initial values to localStorage
     try {
       localStorage.setItem('cryptoATH', JSON.stringify(initialATH));
     } catch (error) {
       console.error('Error saving initial ATH to storage:', error);
     }
-    
+
     return initialATH;
   }
 
